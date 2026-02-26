@@ -6,6 +6,7 @@ import ForgotPassword from "../pages/ForgotPassword";
 import PageLayout from "../layouts/PageLayout";
 import AuthLayout from "../layouts/AuthLayout";
 import PageProduct from "../pages/PageProduct";
+import OrdersPage from "../pages/Orders";
 
 const Paths = () => {
     return (
@@ -13,6 +14,7 @@ const Paths = () => {
             <Routes>
                 <Route path="/" element={<PageLayout />}>
                     <Route index element={<Home />} />
+                    <Route path="orders" element={<OrdersPage />} />
                 </Route>
 
                 
