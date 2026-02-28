@@ -32,6 +32,7 @@ const PageProduct = () => {
     const imagens = produto?.imagens?.length
         ? produto.imagens
         : ["https://via.placeholder.com/400x400"];
+
     const precoFinal = produto ? produto.preco - (produto.preco * produto.desconto / 100) : 0;
 
     // Carrossel
@@ -45,15 +46,11 @@ const PageProduct = () => {
     // Calcular frete (exemplo)
     async function calcular(cep, peso) {
         try {
-            const response = await AXIOS.get("https://api-correios.com/frete", {
-                params: {
-                    cepOrigem: "61.658-050",
-                    cep,
-                    peso,
-                    serviço: "SEDEX",
-                },
-            });
-            setFrete(response.data.valor);
+            const request = await AXIOS.post('/frete', {
+                cep,
+                peso
+            })
+            setFrete(request.data.preco)
         } catch (error) {
             console.error(error);
         }
@@ -70,115 +67,158 @@ const PageProduct = () => {
             <Meta property="og:image" content={produto.imagens[0]} />
             <Meta property="og:type" content="product" />
 
-            <main className="bg-[#43464b] p-20 flex justify-center gap-10 text-gray-100">
-                {/* Coluna das imagens */}
-                <div className="flex flex-col gap-6 items-center">
-                    <img
-                        src={imagens[imagemAtiva]}
-                        alt={`Imagem principal`}
-                        className="w-96 h-96 object-cover border-2 rounded-xl shadow-lg"
-                    />
+            <main>
+                <div className="p-20 bg-(--bg) gap-10 flex justify-center text-white">
 
-                    {/* Carrossel de miniaturas */}
-                    <div className="flex items-center gap-2 mt-2">
-                        <button
-                            onClick={prev}
-                            disabled={startIndex === 0}
-                            className="px-3 py-1 bg-gray-700 text-white rounded-lg hover:bg-gray-800 disabled:opacity-50 transition"
-                        >
-                            &lt;
-                        </button>
+                    {/* GALERIA */}
+                    <div className="flex flex-col items-center gap-8">
 
-                        <div className="flex gap-3 overflow-hidden w-[336px]">
-                            {imagens.slice(startIndex, startIndex + 3).map((img, idx) => {
-                                const actualIndex = startIndex + idx;
-                                return (
-                                    <img
-                                        key={actualIndex}
-                                        src={img}
-                                        alt={`Miniatura ${actualIndex}`}
-                                        onClick={() => setImagemAtiva(actualIndex)}
-                                        className={`w-32 h-32 object-cover border-2 rounded-lg cursor-pointer transition-all duration-300 hover:scale-105 ${actualIndex === imagemAtiva
-                                            ? "border-blue-500 scale-110 shadow-lg"
-                                            : "border-gray-300"
-                                            }`}
-                                    />
-                                );
-                            })}
-                        </div>
+                        <img
+                            src={imagens[imagemAtiva]}
+                            alt="Imagem principal"
+                            className="w-[520px] h-[520px] object-cover rounded-2xl shadow-2xl border border-gray-700 hover:scale-[1.02] transition duration-500"
+                        />
 
-                        <button
-                            onClick={next}
-                            disabled={startIndex >= imagens.length - 3}
-                            className="px-3 py-1 bg-gray-700 text-white rounded-lg hover:bg-gray-800 disabled:opacity-50 transition"
-                        >
-                            &gt;
-                        </button>
-                    </div>
-                </div>
-
-                {/* Coluna de informações */}
-                <div className="flex flex-col gap-6 w-96">
-                    {/* Breadcrumb */}
-                    <div className="flex gap-2 text-xs text-gray-400 hover:text-blue-400 transition">
-                        <a href="/" className="hover:underline">Início</a> &gt;
-                        <a href={`/categoria/${produto.categoria.toLowerCase()}`} className="hover:underline">{produto.categoria}</a> &gt;
-                        <span>{produto.name}</span>
-                    </div>
-
-                    {/* Nome e preço */}
-                    <div className="flex flex-col gap-3">
-                        <h1 className="text-3xl font-extrabold">{produto.name}</h1>
-                        <div className="flex flex-col gap-1">
-                            <span className="text-xl text-gray-400">
-                                R$<span className={`${produto.desconto > 0 ? 'line-through' : ''}`}>{produto.preco.toFixed(2)}</span>
-                            </span>
-                            {produto.desconto > 0 && (
-                                <span className="text-2xl text-green-400 font-bold">
-                                    R$ {precoFinal.toFixed(2)}
-                                </span>
-                            )}
-                        </div>
-                    </div>
-
-                    {/* Quantidade e comprar */}
-                    <div className="flex items-center gap-4">
-                        <div className="flex items-center justify-between gap-4 border rounded-lg p-3">
-                            <button onClick={() => quantidade > 1 && setQuantidade(quantidade - 1)}>&lt;</button>
-                            <span className="font-bold">{quantidade}</span>
-                            <button onClick={() => quantidade < produto.estoque && setQuantidade(quantidade + 1)}>&gt;</button>
-                        </div>
-                        <a href="" className="flex-1 p-3 text-center bg-purple-600 hover:bg-purple-700 rounded-lg font-bold transition">
-                            Comprar
-                        </a>
-                    </div>
-
-                    {/* CEP / Frete */}
-                    <div className="flex flex-col gap-2">
-                        <p className="font-semibold text-gray-200">Meus Envios</p>
-                        <div className="flex gap-2">
-                            <input
-                                type="text"
-                                placeholder="Seu CEP"
-                                className="flex-1 p-2 rounded-lg border border-gray-600 bg-gray-700 text-white outline-none"
-                                onChange={(e) => setCep(e.target.value)}
-                            />
+                        <div className="flex items-center gap-4">
                             <button
-                                className="px-4 bg-purple-600 hover:bg-purple-700 rounded-lg transition text-white font-semibold"
-                                onClick={() => calcular(cep, produto.peso)}
+                                onClick={prev}
+                                disabled={startIndex === 0}
+                                className="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 transition disabled:opacity-30"
                             >
-                                Calcular
+                                &lt;
+                            </button>
+
+                            <div className="flex gap-4">
+                                {imagens.slice(startIndex, startIndex + 3).map((img, idx) => {
+                                    const actualIndex = startIndex + idx;
+                                    return (
+                                        <img
+                                            key={actualIndex}
+                                            src={img}
+                                            alt={`Miniatura ${actualIndex}`}
+                                            onClick={() => setImagemAtiva(actualIndex)}
+                                            className={`w-24 h-24 object-cover rounded-xl cursor-pointer transition-all duration-300
+                ${actualIndex === imagemAtiva
+                                                    ? "ring-2 ring-purple-500 scale-110"
+                                                    : "opacity-70 hover:opacity-100"
+                                                }`}
+                                        />
+                                    );
+                                })}
+                            </div>
+
+                            <button
+                                onClick={next}
+                                disabled={startIndex >= imagens.length - 3}
+                                className="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 transition disabled:opacity-30"
+                            >
+                                &gt;
                             </button>
                         </div>
-                        {frete && <p className="text-green-400 font-semibold mt-1">Frete estimado: R$ {frete}</p>}
                     </div>
 
-                    {/* Descrição */}
-                    <div className="flex flex-col gap-2">
-                        <h2 className="text-lg font-bold">Descrição</h2>
-                        <p className="max-h-48 overflow-y-auto break-words p-2 rounded-lg bg-gray-700">
-                            {produto.descricao}
-                        </p>
+                    {/* INFO PRODUTO */}
+                    <div className="flex flex-col gap-8 p-8 rounded-2xl border border-white/10   max-w-md">
+
+                        {/* Breadcrumb */}
+                        <div className="text-sm text-gray-400">
+                            <a href="/" className="hover:text-purple-400 transition">Início</a> &gt; <a
+                                href={`/categoria/${produto.categoria.toLowerCase()}`}
+                                className="hover:text-purple-400 transition"
+                            >
+                                {produto.categoria}
+                            </a>
+                            &gt;
+                            <span className="text-gray-300">{produto.name}</span>
+                        </div>
+
+                        {/* Nome + Preço */}
+                        <div>
+                            <h1 className="text-3xl font-extrabold mb-4">{produto.name}</h1>
+
+                            <div className="flex items-center gap-4">
+                                <span
+                                    className={`text-xl ${produto.desconto > 0 ? "line-through text-gray-500" : ""
+                                        }`}
+                                >
+                                    R$ {produto.preco.toFixed(2)}
+                                </span>
+
+                                {produto.desconto > 0 && (
+                                    <>
+                                        <span className="text-3xl text-green-400 font-bold">
+                                            R$ {precoFinal.toFixed(2)}
+                                        </span>
+                                        <span className="bg-green-500/20 text-green-400 px-3 py-1 text-sm rounded-full font-semibold">
+                                            -{produto.desconto}%
+                                        </span>
+                                    </>
+                                )}
+                            </div>
+                        </div>
+
+                        {/* Quantidade + Comprar */}
+                        <div className="flex gap-4">
+                            <div className="flex items-center justify-between gap-6 bg-white/10 rounded-xl px-4 py-3">
+                                <button
+                                    onClick={() => quantidade > 1 && setQuantidade(quantidade - 1)}
+                                    className="text-xl hover:text-purple-400 transition"
+                                >
+                                    −
+                                </button>
+                                <span className="font-bold text-lg">{quantidade}</span>
+                                <button
+                                    onClick={() =>
+                                        quantidade < produto.estoque &&
+                                        setQuantidade(quantidade + 1)
+                                    }
+                                    className="text-xl hover:text-purple-400 transition"
+                                >
+                                    +
+                                </button>
+                            </div>
+
+                            <a
+                                href=""
+                                className="flex-1 text-center py-3  hover:bg-purple-700 bg-(--bgButton) cursor-pointer  rounded-xl font-bold text-lg shadow-lg   duration-300"
+                            >
+                                Comprar Agora
+                            </a>
+                        </div>
+
+                        {/* Frete */}
+                        <div className=" p-4 rounded-xl border border-white">
+                            <p className="font-semibold mb-3">Calcular Frete</p>
+
+                            <div className="flex gap-3">
+                                <input
+                                    type="text"
+                                    placeholder="Seu CEP"
+                                    className="flex-1 p-2 rounded-lg bg-white/10 border border-white/10 outline-none focus:border-purple-500 transition"
+                                    onChange={(e) => setCep(e.target.value)}
+                                />
+                                <button
+                                    className="px-4 bg-(--bgButton)  cursor-pointer hover:bg-purple-700 rounded-lg font-semibold transition"
+                                    onClick={() => calcular(cep, produto.peso)}
+                                >
+                                    OK
+                                </button>
+                            </div>
+
+                            {frete && (
+                                <p className="text-green-400 font-semibold mt-3">
+                                    Frete estimado: R$ {frete}
+                                </p>
+                            )}
+                        </div>
+
+                        {/* Descrição */}
+                        <div>
+                            <h2 className="text-lg font-bold mb-2">Descrição</h2>
+                            <p className=" wrap-break-word text-gray-300 leading-relaxed">
+                                {produto.descricao}
+                            </p>
+                        </div>
                     </div>
                 </div>
             </main>

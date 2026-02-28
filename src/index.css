@@ -1,15 +1,12 @@
 @import "tailwindcss";
 
 
-:root {
+@theme {
     --bg: #121212;
     --bgButton: #9e57b7;
     --bgCard: #28272c;
     --textColor: #68686a;
     --bgImgProduto: #ededed;
     --bgCardProduto: #f0f0f0;
-    --border: 16px;
-    --borderWidth: 1px;
-    --duration: 600;
     --bgHover: #6e11b0;
 }

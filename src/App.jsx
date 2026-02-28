@@ -1,7 +1,8 @@
 import { HeadProvider } from "react-head";
+import Header from "./components/Header";
+import Menu from "./components/Menu";
 import Paths from "./routes/Paths";
-
-const App = () => {
+function App() {
   return (
     <HeadProvider>
       <Paths />

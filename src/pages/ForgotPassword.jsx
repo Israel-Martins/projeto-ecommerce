@@ -24,7 +24,7 @@ export default function ForgotPassword() {
     }
 
     return (
-        <div className="min-h-screen bg gray-100 flex flex-col">
+        <div className="min-h-screen bg-gray-100 flex flex-col">
             <header className="bg-zinc-900 shadow-sm">
                 <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
                     <h1 className="text-xl font-mono text-gray-300">3Dtech</h1>
@@ -41,13 +41,13 @@ export default function ForgotPassword() {
                     </p>
 
                     {error && (
-                        <div className="mb-4 rounded-lg bg-red-100 text-red-700 px-4 py-2text-sm">
+                        <div className="mb-4 rounded-lg bg-red-100 text-red-700 px-4 py-2 text-sm">
                             {error}
                         </div>
                     )}
 
                     {success && (
-                        <div className="mb-4 rounded-lg bg-green-100 text-green-700 px-4 py-2text-sm">
+                        <div className="mb-4 rounded-lg bg-green-100 text-green-700 px-4 py-2 text-sm">
                             {success}
                         </div>
                     )}
@@ -70,7 +70,7 @@ export default function ForgotPassword() {
                         </button>
                     </form>
 
-                    <p className="mt-6 texxt-center text-sm text-gray-600">
+                    <p className="mt-6 text-center text-sm text-gray-600">
                         lembrou a senha?{""}
                         <a href="/login"
                             className="text-indigo-600 hover:underline font-medium">
