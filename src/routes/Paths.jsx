@@ -8,6 +8,7 @@ import AuthLayout from "../layouts/AuthLayout";
 import PageProduct from "../pages/PageProduct";
 import ResetPassword from "../pages/ResetPassword";
 import Checkout from "../pages/Checkout";
+import Usuario from "../pages/Usuario";
 
 const Paths = () => {
     return (
@@ -15,6 +16,8 @@ const Paths = () => {
             <Routes>
                 <Route path="/" element={<PageLayout />}>
                     <Route index element={<Home />} />
+                    <Route path="/product" element={<PageProduct />} />
+                    <Route path="/usuario/:name" element={<Usuario />} />
                     <Route path="/checkout" element={<Checkout />} />
                 </Route>
 
@@ -23,7 +26,6 @@ const Paths = () => {
                     <Route path="/login" element={<Login />} />
                     <Route path="/register" element={<Register />} />
                     <Route path="/forgot-password" element={<ForgotPassword />} />
-                    <Route path="/product/:slug" element={<PageProduct />} />
                     <Route path="/reset-password" element={<ResetPassword />} />
                 </Route>
                 <Route path="/dashboard" element={''}>

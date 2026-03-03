@@ -1,211 +1,213 @@
 import { useState } from "react";
-import { AXIOS } from "../services"
-import { maskPhone, isValidPhone, maskCPF, isValidCPF } from "../utils/index";
-
+import { useUser } from "../contexts/UsuarioProvider";
+import { isValidCPF, isValidPhone } from "../utils";
 
 export default function Register() {
-    const [form, setForm] = useState({
-        name: "",
-        email: "",
-        phone: "",
-        gender: "",
-        cpf: "",
-        birthDate: "",
-        senha: "",
-        confirmPassword: "",
-    });
+  const { register } = useUser();
 
+  const [form, setForm] = useState({
+    nome: "",
+    genero: "",
+    cpf: "",
+    email: "",
+    telefone: "",
+    data_nasc: "", // YYYY-MM-DD
+    senha: "",
+    confirmSenha: "",
+  });
 
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState("");
-    const [success, setSuccess] = useState("");
+  function handleChange(e) {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  }
 
-    function handleChange(e) {
-        setForm({ ...form, [e.target.name]: e.target.value });
+  async function handleSubmit(e) {
+    e.preventDefault();
+    setError("");
+    setSuccess("");
+
+    if (form.senha !== form.confirmSenha) {
+      setError("As senhas não coincidem.");
+      return;
     }
 
-    async function handleSubmit(e) {
-        e.preventDefault();
-        setError("");
-        setSuccess("");
-
-        if (form.phone && !isValidPhone(form.phone)) {
-            console.log("Telefone inválido:", form.phone);
-            setError("Telefone inválido. Use DDD + número.");
-            return;
-        }
-
-        if (!isValidCPF(form.cpf)) {
-            console.log("CPF inválido:", form.cpf);
-            setError("CPF inválido.");
-            return;
-        }
-
-        if (form.senha !== form.confirmPassword) {
-            setError("As senhas não coincidem.");
-            return;
-        }
-
-        try {
-            setLoading(true);
-            const request = await AXIOS.post("/users", {
-                name: form.name,
-                email: form.email,
-                phone: form.phone ? form.phone.replace(/\D/g, "") : null,
-                gender: form.gender,
-                cpf: form.cpf.replace(/\D/g, ""),
-                birthDate: form.birthDate,
-                senha: form.password,
-            });
-
-            setSuccess("Conta criada com sucesso!");
-            console.log(request.data);
-
-            setForm({
-                name: "",
-                email: "",
-                phone: "",
-                gender: "",
-                cpf: "",
-                birthDate: "",
-                senha: "",
-                confirmPassword: "",
-            });
-        } catch (err) {
-            setError(
-                err.response?.data?.message ||
-                "Erro em criar uma conta. Tente novamente."
-            );
-        } finally {
-            setLoading(false);
-        }
+    if (form.phone && !isValidPhone(form.telefone)) {
+      console.log("Telefone inválido:", form.phone);
+      setError("Telefone inválido. Use DDD + número.");
+      return;
     }
 
-    return (
-        <div className="min-h-screen bg-zinc-800 flex flex-col">
-            <main className="flex-1 flex items-center justify-center px-4">
-                <div className="w-full max-w-md bg-white rounded-2xl shadow-md p-6 sm:p-8">
-                    <h2 className="text-2xl font-semibold text-gray-800 mb-6 text-center">
-                        Criar conta
-                    </h2>
+    if (!isValidCPF(form.cpf)) {
+      console.log("CPF inválido:", form.cpf);
+      setError("CPF inválido.");
+      return;
+    }
 
-                    {error && (
-                        <div className="mb-4 rounded-lg bg-red-100 text-red-700 px-4 py-2 text-sm">
-                            {error}
-                        </div>
-                    )}
+    if (form.senha !== form.confirmPassword) {
+      setError("As senhas não coincidem.");
+      return;
+    }
+    try {
+      setLoading(true);
 
-                    {success && (
-                        <div className="mb-4 rounded-lg bg-green-100 text-green-700 px-4 py-2 text-sm">
-                            {success}
-                        </div>
-                    )}
+      await register(
+        form.nome,
+        form.email,
+        form.cpf,
+        form.telefone,
+        form.genero,
+        form.data_nasc,
+        form.senha
+      );
 
-                    <form onSubmit={handleSubmit} className="space-y-4">
-                        <input
-                            type="text"
-                            name="name"
-                            placeholder="Nome completo"
-                            required
-                            value={form.name}
-                            onChange={handleChange}
-                            className="w-full rounded-lg border border-gray-300 px-4 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200"
-                        />
+      setSuccess("Conta criada com sucesso!");
 
-                        <input
-                            type="email"
-                            name="email"
-                            placeholder="Email"
-                            required
-                            value={form.email}
-                            onChange={handleChange}
-                            className="w-full rounded-lg border border-gray-300 px-4 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200"
-                        />
 
-                        <input
-                            type="tel"
-                            name="phone"
-                            placeholder="Telefone (DDD + número)"
-                            value={form.phone}
-                            onChange={(e) => setForm({... form, phone: maskPhone(e.target.value) })
-                        }
-                            className="w-full rounded-lg border border-gray-300 px-4 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200"
-                        />
 
-                        <select
-                            name="gender"
-                            required
-                            value={form.gender}
-                            onChange={handleChange}
-                            className="w-full rounded-lg border border-gray-300 px-4 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200"
-                        >
-                            <option value="">Selecione o gênero</option>
-                            <option value="male">Masculino</option>
-                            <option value="female">Feminino</option>
-                            <option value="other">Outro</option>
-                            <option value="prefer_not_say">Prefiro não informar</option>
-                        </select>
+      console.log(form)
+        setForm({
+          nome: "",
+          genero: "",
+          cpf: "",
+          email: "",
+          telefone: "",
+          data_nasc: "",
+          senha: "",
+          confirmSenha: "",
+        });
+    } catch (err) {
+      setError(
+        err.response?.data?.message || "Erro ao criar a conta. Tente novamente."
+      );
+    } finally {
+      setLoading(false);
+    }
+  }
 
-                        <input
-                            type="text"
-                            name="cpf"
-                            placeholder="CPF"
-                            value={form.cpf}
-                            onChange={(e) =>
-                                setForm({ ...form, cpf: maskCPF(e.target.value) })}
-                            className="w-full rounded-lg border border-gray-300 px-4 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200"
-                        />
+  return (
+    <div className="min-h-screen bg-gray-100 flex flex-col">
+      <main className="flex-1 flex items-center justify-center px-4">
+        <div className="w-full max-w-md bg-white rounded-2xl shadow-md p-6 sm:p-8">
+          <h2 className="text-2xl font-semibold text-gray-800 mb-6 text-center">
+            Criar conta
+          </h2>
 
-                        <input
-                            type="date"
-                            name="birthDate"
-                            required
-                            value={form.birthDate}
-                            onChange={handleChange}
-                            className="w-full rounded-lg border border-gray-300 px-4 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200" />
+          {error && (
+            <div className="mb-4 rounded-lg bg-red-100 text-red-700 px-4 py-2 text-sm">
+              {error}
+            </div>
+          )}
 
-                        <input
-                            type="password"
-                            name="senha"
-                            placeholder="Senha"
-                            required
-                            value={form.senha}
-                            onChange={handleChange}
-                            className="w-full rounded-lg border border-gray-300 px-4 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200"
-                        />
+          {success && (
+            <div className="mb-4 rounded-lg bg-green-100 text-green-700 px-4 py-2 text-sm">
+              {success}
+            </div>
+          )}
 
-                        <input
-                            type="password"
-                            name="confirmPassword"
-                            placeholder="Confirmar senha"
-                            required
-                            value={form.confirmPassword}
-                            onChange={handleChange}
-                            className="w-full rounded-lg border border-gray-300 px-4 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200"
-                        />
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <input
+              type="text"
+              name="nome"
+              placeholder="Nome completo"
+              required
+              value={form.nome}
+              onChange={handleChange}
+              className="w-full rounded-lg border border-gray-300 px-4 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+            />
 
-                        <button
-                            type="submit"
-                            disabled={loading}
-                            className="w-full rounded-lg bg-purple-600 py-2.5 text-white font-medium hover:bg-purple-700 transition disabled:opacity-60 disabled:cursor-not-allowed"
-                        >
-                            {loading ? "Criando conta..." : "Criar conta"}
-                        </button>
-                    </form>
+            <input
+              type="text"
+              name="genero"
+              placeholder="Gênero"
+              required
+              value={form.genero}
+              onChange={handleChange}
+              className="w-full rounded-lg border border-gray-300 px-4 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+            />
 
-                    <p className="mt-6 text-center text-sm text-gray-600">
-                        Já possui uma conta?{" "}
-                        <a
-                            href="/login"
-                            className="text-gray-600 hover:underline font-medium"
-                        >
-                            Entrar
-                        </a>
-                    </p>
-                </div>
-            </main>
+            <input
+              type="text"
+              name="cpf"
+              placeholder="CPF"
+              required
+              value={form.cpf}
+              onChange={handleChange}
+              className="w-full rounded-lg border border-gray-300 px-4 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+            />
+
+            <input
+              type="email"
+              name="email"
+              placeholder="Email"
+              required
+              value={form.email}
+              onChange={handleChange}
+              className="w-full rounded-lg border border-gray-300 px-4 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+            />
+
+            <input
+              type="text"
+              name="telefone"
+              placeholder="Telefone"
+              required
+              value={form.telefone}
+              onChange={handleChange}
+              className="w-full rounded-lg border border-gray-300 px-4 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+            />
+
+            <input
+              type="date"
+              name="data_nasc"
+              placeholder="Data de Nascimento"
+              required
+              value={form.data_nasc}
+              onChange={handleChange}
+              className="w-full rounded-lg border border-gray-300 px-4 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+            />
+
+            <input
+              type="password"
+              name="senha"
+              placeholder="Senha"
+              required
+              value={form.senha}
+              onChange={handleChange}
+              className="w-full rounded-lg border border-gray-300 px-4 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+            />
+
+            <input
+              type="password"
+              name="confirmSenha"
+              placeholder="Confirmar senha"
+              required
+              value={form.confirmSenha}
+              onChange={handleChange}
+              className="w-full rounded-lg border border-gray-300 px-4 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+            />
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full rounded-lg bg-purple-600 py-2.5 text-white font-medium hover:bg-purple-700 transition disabled:opacity-60 disabled:cursor-not-allowed"
+            >
+              {loading ? "Criando conta..." : "Criar conta"}
+            </button>
+          </form>
+
+          <p className="mt-6 text-center text-sm text-gray-600">
+            Já possui uma conta?{" "}
+            <a
+              href="/login"
+              className="text-indigo-600 hover:underline font-medium"
+            >
+              Entrar
+            </a>
+          </p>
         </div>
-    );
-
+      </main>
+    </div>
+  );
 }
