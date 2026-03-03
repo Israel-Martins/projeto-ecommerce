@@ -8,6 +8,7 @@ import AuthLayout from "../layouts/AuthLayout";
 import PageProduct from "../pages/PageProduct";
 import ResetPassword from "../pages/ResetPassword";
 import Checkout from "../pages/Checkout";
+import Dashboard from "../pages/Dashboard";
 
 const Paths = () => {
     return (
@@ -26,7 +27,7 @@ const Paths = () => {
                     <Route path="/product/:slug" element={<PageProduct />} />
                     <Route path="/reset-password" element={<ResetPassword />} />
                 </Route>
-                <Route path="/dashboard" element={''}>
+                <Route path="/dashboard" element={<Dashboard />} >
                 </Route>
 
             </Routes>
