@@ -1,9 +1,11 @@
 import { useState } from "react";
-import { AXIOS } from "../services"
-import { maskPhone, isValidPhone, maskCPF, isValidCPF } from "../utils/index";
-
+import { isValidCPF, isValidPhone, maskCPF, maskPhone } from "../utils";
+import { useUser } from "../contexts/UsuarioProvider";
 
 export default function Register() {
+
+  const { register } = useUser()
+
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -28,6 +30,11 @@ export default function Register() {
     setError("");
     setSuccess("");
 
+    if (form.senha !== form.confirmPassword) {
+      setError("As senhas não coincidem.");
+      return;
+    }
+
     if (form.phone && !isValidPhone(form.phone)) {
       console.log("Telefone inválido:", form.phone);
       setError("Telefone inválido. Use DDD + número.");
@@ -47,18 +54,20 @@ export default function Register() {
 
     try {
       setLoading(true);
-      const request = await AXIOS.post("/users", {
-        name: form.name,
-        email: form.email,
-        phone: form.phone ? form.phone.replace(/\D/g, "") : null,
-        gender: form.gender,
-        cpf: form.cpf.replace(/\D/g, ""),
-        birthDate: form.birthDate,
-        senha: form.password,
-      });
+      console.log(form);
+      
+
+      await register(
+        form.name,
+        form.email,
+        form.cpf.replaceAll('.', '').replaceAll('-', ''),
+        form.phone.replaceAll('(', '').replaceAll(')', '').replaceAll(' ', ''),
+        form.gender,
+        form.birthDate,
+        form.senha
+      );
 
       setSuccess("Conta criada com sucesso!");
-      console.log(request.data);
 
       setForm({
         name: "",
@@ -70,6 +79,7 @@ export default function Register() {
         senha: "",
         confirmPassword: "",
       });
+
     } catch (err) {
       setError(
         err.response?.data?.message ||
@@ -111,6 +121,7 @@ export default function Register() {
               className="w-full rounded-lg border border-gray-300 px-4 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200"
             />
 
+
             <input
               type="email"
               name="email"
@@ -121,8 +132,6 @@ export default function Register() {
               className="w-full rounded-lg border border-gray-300 px-4 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200"
             />
 
-    return (
-        <div className="min-h-screen bg-gray-100 flex flex-col">
             <input
               type="tel"
               name="phone"
