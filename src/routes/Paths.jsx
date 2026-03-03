@@ -15,6 +15,7 @@ import AdminCoupons from "../pages/admin/Coupons";
 import AdminUsers from "../pages/admin/Users";
 import AdminCategories from "../pages/admin/Categories";
 import AdminProducts from "../pages/admin/Products";
+import Usuario from "../pages/Usuario";
 
 const Paths = () => {
     return (
@@ -23,6 +24,8 @@ const Paths = () => {
                 <Route path="/" element={<PageLayout />}>
                     <Route index element={<Home />} />
                     <Route path="checkout" element={<Checkout />} />
+                    <Route path="/product" element={<PageProduct />} />
+                    <Route path="/usuario/:name" element={<Usuario />} />
                 </Route>
 
                 <Route path="/" element={<AuthLayout />}>
@@ -31,6 +34,9 @@ const Paths = () => {
                     <Route path="forgot-password" element={<ForgotPassword />} />
                     <Route path="product/:slug" element={<PageProduct />} />
                     <Route path="reset-password" element={<ResetPassword />} />
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/register" element={<Register />} />
+                    <Route path="/forgot-password" element={<ForgotPassword />} />
                 </Route>
 
                 <Route path="/admin" element={<BoardLayout />}>

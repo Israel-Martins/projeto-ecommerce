@@ -1,16 +1,15 @@
 import { HeadProvider } from "react-head";
-import Header from "./components/Header";
-import Menu from "./components/Menu";
 import Paths from "./routes/Paths";
-import Categoria from "./components/Categoria";
-import Depoimentos from "./components/Depoimentos";
-
+import { CartProvider } from "./contexts/CartProvider";
+import { UserProvider } from "./contexts/UsuarioProvider";
 function App() {
   return (
     <HeadProvider>
-     <Categoria />
-      <Depoimentos />
-      <Paths />
+      <UserProvider>
+        <CartProvider>
+          <Paths />
+        </CartProvider>
+      </UserProvider>
     </HeadProvider>
   );
 }
