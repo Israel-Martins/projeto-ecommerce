@@ -5,7 +5,7 @@ export default function Menu() {
   const [open, setOpen] = useState(false);
 
   const links = [
-    { name: "Início", href: "#" },
+    { name: "Início", href: "/" },
     { name: "Quem Somos", href: "#" },
     { name: "Produtos", href: "#" },
     { name: "Projetos Personalizados", href: "#" },

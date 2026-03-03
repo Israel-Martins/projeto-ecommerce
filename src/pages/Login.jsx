@@ -1,10 +1,12 @@
 import { useState } from "react";
 import {AXIOS} from "../services"
 import { useUser } from "../contexts/UsuarioProvider";
+import { useNavigate } from "react-router";
 
 export default function Login() {
 
     const {login} = useUser()
+    const navigate = useNavigate()
 
     const [form, setForm] = useState({
         email: "",
@@ -25,7 +27,7 @@ export default function Login() {
         try {
             setLoading(true);
             await login(form.email, form.password)
-            
+            navigate('/')
         } catch (err) {
             setError(
                 err.response?.data?.message || "Email ou senha inválidos."

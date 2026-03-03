@@ -1,11 +1,16 @@
 import { FaSearch, FaUser, FaShoppingCart, FaWhatsapp } from "react-icons/fa";
 import { useCart } from "../contexts/CartProvider";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
+import { useUser } from "../contexts/UsuarioProvider";
 
 export default function Header() {
-    const { cart} = useCart();
+    const { cart , toggleCart } = useCart();
+    const { user } = useUser()
 
-    // 🔹 Total de itens (soma das quantidades)
+    useEffect(() => {
+
+    }, [user])
+
     const totalItems = useMemo(() => {
         return cart.reduce((acc, item) => acc + item.quantidade, 0);
     }, [cart]);
@@ -80,19 +85,41 @@ export default function Header() {
                     transition
                     ">
 
-                        <FaUser className="text-[#B3B3B3]" />
+                        {
+                            user ? (
+                                <a href={`/usuario/${user.nome}`} className="flex items-center justify-center gap-4">
+                                    {
+                                        user.imagem ? (
+                                            <img src={user.imagem} alt="" />
+                                        ) : (
+                                            <div className="px-2.5 py-2 *:font-bold *:text-xl rounded-full bg-gray-600 flex  justify-center gap-1">
+                                                <span> {user.nome[0].toUpperCase()}</span>
+                                                <span> {user.nome[1].toUpperCase()}</span>
+                                            </div>
+                                        )
+                                    }
+                                    <span>{user.nome}</span>
+                                </a>
+                            ) : (
+                                <div className="flex items-center gap-3">
+                                    <FaUser className="text-[#B3B3B3]" />
 
-                        <div className="text-xs leading-tight">
+                                    <div className="text-xs leading-tight">
 
-                            <span className="block text-[#808080]">
-                                Conta
-                            </span>
+                                        <span className="block text-[#808080]">
+                                            Conta
+                                        </span>
 
-                            <a href="/login" className="text-sm font-medium text-[#EAEAEA]">
-                                Entrar
-                            </a>
+                                        <a href="/login" className="text-sm font-medium text-[#EAEAEA]">
+                                            Entrar
+                                        </a>
 
-                        </div>
+                                    </div>
+                                </div>
+
+                            )
+                        }
+
 
                     </div>
 
@@ -106,7 +133,7 @@ export default function Header() {
                     " />
 
                     {/* Cart */}
-                    <div className="relative cursor-pointer">
+                    <button onClick={toggleCart} className="relative cursor-pointer">
 
                         <FaShoppingCart className="
                         text-lg
@@ -125,7 +152,7 @@ export default function Header() {
                         ">
                             {totalItems}
                         </span>
-                    </div>
+                    </button>
                 </div>
             </div>
         </header>

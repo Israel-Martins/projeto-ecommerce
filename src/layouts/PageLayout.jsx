@@ -3,18 +3,20 @@ import Footer from "../components/Footer";
 import Header from "../components/Header";
 import Menu from "../components/Menu";
 
+import CartSidebar from "../components/CartSidebar";
+
 
 const PageLayout = () => {
-    return ( 
+
+    return (
         <div>
-            <Header/>
+            <Header />
             <Menu />
-            <div>
-                <Outlet/>
-            </div>
-            <Footer/>
+            <Outlet />
+            <CartSidebar />
+            <Footer />
         </div>
-     );
+    );
 }
- 
+
 export default PageLayout;

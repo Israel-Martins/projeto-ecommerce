@@ -1,6 +1,8 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { FaStar, FaRegStar, FaTruck, FaShoppingCart } from "react-icons/fa";
 import { useCart } from "../contexts/CartProvider";
+import { useParams } from "react-router";
+import { AXIOS } from "../services";
 
 const produtoCompleto = {
     id: 1,
@@ -26,8 +28,9 @@ const produtoCompleto = {
 };
 
 export default function PageProduct() {
+    const { id } = useParams()
     const { addToCart } = useCart(); // pegando função do contexto
-    const [produto] = useState(produtoCompleto);
+    const [produto, setProduto] = useState(produtoCompleto);
     const [imagemAtiva, setImagemAtiva] = useState(0);
     const [quantidade, setQuantidade] = useState(1);
     const [cep, setCep] = useState("");
@@ -40,6 +43,23 @@ export default function PageProduct() {
     // =========================
     // CÁLCULO DE PREÇO
     // =========================
+
+    useEffect(() => {
+        async function buscarProduto() {
+
+            try {
+                const response = await AXIOS.get(`/api/products/${id}`)
+
+                setProduto(response.data)
+            } catch (error) {
+                console.log(error);
+                
+            }
+
+        }
+        buscarProduto()
+    }, [])
+
     const preco = useMemo(() => {
         const valorNumero = Number(produto.valor);
         const descontoNumero = Number(produto.desconto || 0);

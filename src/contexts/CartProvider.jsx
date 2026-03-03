@@ -1,118 +1,128 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { AXIOS } from "../services";
 
-const CartContext = createContext();
+const CartContext = createContext({});
 
 export function CartProvider({ children }) {
-    const [cart, setCart] = useState(() => {
-        const saved = localStorage.getItem("cart");
-        return saved ? JSON.parse(saved) : [];
-    });
-
+    const [cart, setCart] = useState([]);
     const [loading, setLoading] = useState(true);
 
-    // 🔹 Buscar carrinho do banco ao iniciar (se existir)
+    // 🔥 NOVO ESTADO DO SIDEBAR
+    const [isCartOpen, setIsCartOpen] = useState(false);
+
+    const openCart = () => setIsCartOpen(true);
+    const closeCart = () => setIsCartOpen(false);
+    const toggleCart = () => setIsCartOpen(prev => !prev);
+
+    // =============================
+    // RESTO DO SEU CÓDIGO NORMAL
+    // =============================
+
     useEffect(() => {
-        const fetchCartFromBackend = async () => {
+        const fetchCart = async () => {
             try {
                 const { data } = await AXIOS.get("/api/cart");
-
-                if (data && Array.isArray(data)) {
+                if (Array.isArray(data)) {
                     setCart(data);
                     localStorage.setItem("cart", JSON.stringify(data));
                 }
-            } catch (error) {
-                console.warn("Backend offline. Usando carrinho local.");
-                return error
+            } catch {
+                console.warn("Backend offline.");
             } finally {
                 setLoading(false);
             }
         };
 
-        fetchCartFromBackend();
+        fetchCart();
     }, []);
 
-    // 🔹 Sempre salvar no localStorage quando mudar
     useEffect(() => {
         if (!loading) {
             localStorage.setItem("cart", JSON.stringify(cart));
         }
     }, [cart, loading]);
 
-    // 🔹 Função para sincronizar com backend
     const syncWithBackend = async (updatedCart) => {
+        if (loading) return;
         try {
             await AXIOS.post("/api/cart/sync", updatedCart);
-        } catch (error) {
-        
-            console.warn("Não foi possível sincronizar com o backend.");
-            return error
+        } catch {
+            console.warn("Erro ao sincronizar.");
         }
     };
 
-    // 🔹 Adicionar produto
     const addToCart = (produto, quantidade = 1) => {
-        let updatedCart;
+        setCart(prev => {
+            const existing = prev.find(p => p.id === produto.id);
 
-        const existing = cart.find(item => item.id === produto.id);
+            let updated;
+            if (existing) {
+                updated = prev.map(p =>
+                    p.id === produto.id
+                        ? { ...p, quantidade: p.quantidade + quantidade }
+                        : p
+                );
+            } else {
+                updated = [...prev, { ...produto, quantidade }];
+            }
 
-        if (existing) {
-            updatedCart = cart.map(item =>
-                item.id === produto.id
-                    ? { ...item, quantidade: item.quantidade + quantidade }
-                    : item
+            syncWithBackend(updated);
+            return updated;
+        });
+    };
+
+    const removeFromCart = (id) => {
+        setCart(prev => {
+            const updated = prev.filter(p => p.id !== id);
+            syncWithBackend(updated);
+            return updated;
+        });
+    };
+
+    const updateQuantity = (id, quantidade) => {
+        if (quantidade < 1) return;
+
+        setCart(prev => {
+            const updated = prev.map(p =>
+                p.id === id ? { ...p, quantidade } : p
             );
-        } else {
-            updatedCart = [...cart, { ...produto, quantidade }];
-        }
-
-        setCart(updatedCart);
-        syncWithBackend(updatedCart);
+            syncWithBackend(updated);
+            return updated;
+        });
     };
 
-    // 🔹 Remover produto
-    const removeFromCart = (produtoId) => {
-        const updatedCart = cart.filter(item => item.id !== produtoId);
-        setCart(updatedCart);
-        syncWithBackend(updatedCart);
-    };
-
-    // 🔹 Atualizar quantidade
-    const updateQuantity = (produtoId, novaQuantidade) => {
-        const updatedCart = cart.map(item =>
-            item.id === produtoId
-                ? { ...item, quantidade: novaQuantidade }
-                : item
-        );
-
-        setCart(updatedCart);
-        syncWithBackend(updatedCart);
-    };
-
-    // 🔹 Limpar carrinho
     const clearCart = () => {
         setCart([]);
         syncWithBackend([]);
     };
 
-    // 🔹 Calcular total
     const total = cart.reduce((acc, item) => {
         const valor = Number(item.valor || 0);
-        const desconto = Number(item.desconto || 0);
-        const final = valor - (valor * desconto) / 100;
-        return acc + final * item.quantidade;
+        return acc + valor * item.quantidade;
     }, 0);
+
+    const totalItems = cart.reduce(
+        (acc, item) => acc + item.quantidade,
+        0
+    );
 
     return (
         <CartContext.Provider
             value={{
                 cart,
+                total,
+                totalItems,
+                loading,
                 addToCart,
                 removeFromCart,
                 updateQuantity,
                 clearCart,
-                total,
-                loading
+
+                // 🔥 exportando controle do sidebar
+                isCartOpen,
+                openCart,
+                closeCart,
+                toggleCart
             }}
         >
             {children}

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useUser } from "../contexts/UsuarioProvider";
+import { isValidCPF, isValidPhone } from "../utils";
 
 export default function Register() {
   const { register } = useUser();
@@ -33,6 +34,22 @@ export default function Register() {
       return;
     }
 
+    if (form.phone && !isValidPhone(form.telefone)) {
+      console.log("Telefone inválido:", form.phone);
+      setError("Telefone inválido. Use DDD + número.");
+      return;
+    }
+
+    if (!isValidCPF(form.cpf)) {
+      console.log("CPF inválido:", form.cpf);
+      setError("CPF inválido.");
+      return;
+    }
+
+    if (form.senha !== form.confirmPassword) {
+      setError("As senhas não coincidem.");
+      return;
+    }
     try {
       setLoading(true);
 
@@ -40,7 +57,7 @@ export default function Register() {
         form.nome,
         form.email,
         form.cpf,
-        form.telefone ,
+        form.telefone,
         form.genero,
         form.data_nasc,
         form.senha
@@ -48,19 +65,19 @@ export default function Register() {
 
       setSuccess("Conta criada com sucesso!");
 
-      // Resetar formulário
+
 
       console.log(form)
-    //   setForm({
-    //     nome: "",
-    //     genero: "",
-    //     cpf: "",
-    //     email: "",
-    //     telefone: "",
-    //     data_nasc: "",
-    //     senha: "",
-    //     confirmSenha: "",
-    //   });
+        setForm({
+          nome: "",
+          genero: "",
+          cpf: "",
+          email: "",
+          telefone: "",
+          data_nasc: "",
+          senha: "",
+          confirmSenha: "",
+        });
     } catch (err) {
       setError(
         err.response?.data?.message || "Erro ao criar a conta. Tente novamente."
