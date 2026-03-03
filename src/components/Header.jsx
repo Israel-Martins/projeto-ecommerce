@@ -67,7 +67,7 @@ export default function Header() {
                 <div className="flex-1 flex justify-center">
 
                     <img
-                        src="/logo.png"
+                        src="/logo-icon.svg"
                         alt="Logo"
                         className="h-10 object-contain opacity-90"
                     />
@@ -87,7 +87,7 @@ export default function Header() {
 
                         {
                             user ? (
-                                <a href={`/usuario/${user.nome}`} className="flex items-center justify-center gap-4">
+                                <a href={`/orders`} className="flex items-center justify-center gap-4">
                                     {
                                         user.imagem ? (
                                             <img src={user.imagem} alt="" />

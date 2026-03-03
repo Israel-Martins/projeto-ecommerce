@@ -1,19 +1,20 @@
 import { useState } from "react";
-import { useUser } from "../contexts/UsuarioProvider";
 import { isValidCPF, isValidPhone, maskCPF, maskPhone } from "../utils";
+import { useUser } from "../contexts/UsuarioProvider";
 
 export default function Register() {
-  const { register } = useUser();
+
+  const { register } = useUser()
 
   const [form, setForm] = useState({
-    nome: "",
-    genero: "",
-    cpf: "",
+    name: "",
     email: "",
-    telefone: "",
-    data_nasc: "", // YYYY-MM-DD
+    phone: "",
+    gender: "",
+    cpf: "",
+    birthDate: "",
     senha: "",
-    confirmSenha: "",
+    confirmPassword: "",
   });
 
   const [loading, setLoading] = useState(false);
@@ -29,12 +30,12 @@ export default function Register() {
     setError("");
     setSuccess("");
 
-    if (form.senha !== form.confirmSenha) {
+    if (form.senha !== form.confirmPassword) {
       setError("As senhas não coincidem.");
       return;
     }
 
-    if (form.telefone && !isValidPhone(form.telefone)) {
+    if (form.phone && !isValidPhone(form.phone)) {
       console.log("Telefone inválido:", form.phone);
       setError("Telefone inválido. Use DDD + número.");
       return;
@@ -50,37 +51,39 @@ export default function Register() {
       setError("As senhas não coincidem.");
       return;
     }
+
     try {
       setLoading(true);
+      console.log(form);
+      
 
       await register(
-        form.nome,
+        form.name,
         form.email,
-        form.cpf,
-        form.telefone,
-        form.genero,
-        form.data_nasc,
+        form.cpf.replaceAll('.', '').replaceAll('-', ''),
+        form.phone.replaceAll('(', '').replaceAll(')', '').replaceAll(' ', ''),
+        form.gender,
+        form.birthDate,
         form.senha
       );
 
       setSuccess("Conta criada com sucesso!");
 
+      setForm({
+        name: "",
+        email: "",
+        phone: "",
+        gender: "",
+        cpf: "",
+        birthDate: "",
+        senha: "",
+        confirmPassword: "",
+      });
 
-
-      console.log(form)
-        setForm({
-          nome: "",
-          genero: "",
-          cpf: "",
-          email: "",
-          telefone: "",
-          data_nasc: "",
-          senha: "",
-          confirmSenha: "",
-        });
     } catch (err) {
       setError(
-        err.response?.data?.message || "Erro ao criar a conta. Tente novamente."
+        err.response?.data?.message ||
+        "Erro em criar uma conta. Tente novamente."
       );
     } finally {
       setLoading(false);
@@ -88,7 +91,7 @@ export default function Register() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col">
+    <div className="min-h-screen bg-zinc-800 flex flex-col">
       <main className="flex-1 flex items-center justify-center px-4">
         <div className="w-full max-w-md bg-white rounded-2xl shadow-md p-6 sm:p-8">
           <h2 className="text-2xl font-semibold text-gray-800 mb-6 text-center">
@@ -110,33 +113,14 @@ export default function Register() {
           <form onSubmit={handleSubmit} className="space-y-4">
             <input
               type="text"
-              name="nome"
+              name="name"
               placeholder="Nome completo"
               required
-              value={form.nome}
+              value={form.name}
               onChange={handleChange}
               className="w-full rounded-lg border border-gray-300 px-4 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200"
             />
 
-            <input
-              type="text"
-              name="genero"
-              placeholder="Gênero"
-              required
-              value={form.genero}
-              onChange={handleChange}
-              className="w-full rounded-lg border border-gray-300 px-4 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200"
-            />
-
-            <input
-              type="text"
-              name="cpf"
-              placeholder="CPF"
-              required
-              value={maskCPF(form.cpf)}
-              onChange={handleChange}
-              className="w-full rounded-lg border border-gray-300 px-4 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200"
-            />
 
             <input
               type="email"
@@ -149,24 +133,46 @@ export default function Register() {
             />
 
             <input
-              type="text"
-              name="telefone"
-              placeholder="Telefone"
+              type="tel"
+              name="phone"
+              placeholder="Telefone (DDD + número)"
+              value={form.phone}
+              onChange={(e) => setForm({ ...form, phone: maskPhone(e.target.value) })
+              }
+              className="w-full rounded-lg border border-gray-300 px-4 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+            />
+
+            <select
+              name="gender"
               required
-              value={maskPhone(form.telefone)}
+              value={form.gender}
               onChange={handleChange}
+              className="w-full rounded-lg border border-gray-300 px-4 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+            >
+              <option value="">Selecione o gênero</option>
+              <option value="male">Masculino</option>
+              <option value="female">Feminino</option>
+              <option value="other">Outro</option>
+              <option value="prefer_not_say">Prefiro não informar</option>
+            </select>
+
+            <input
+              type="text"
+              name="cpf"
+              placeholder="CPF"
+              value={form.cpf}
+              onChange={(e) =>
+                setForm({ ...form, cpf: maskCPF(e.target.value) })}
               className="w-full rounded-lg border border-gray-300 px-4 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200"
             />
 
             <input
               type="date"
-              name="data_nasc"
-              placeholder="Data de Nascimento"
+              name="birthDate"
               required
-              value={form.data_nasc}
+              value={form.birthDate}
               onChange={handleChange}
-              className="w-full rounded-lg border border-gray-300 px-4 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200"
-            />
+              className="w-full rounded-lg border border-gray-300 px-4 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200" />
 
             <input
               type="password"
@@ -180,10 +186,10 @@ export default function Register() {
 
             <input
               type="password"
-              name="confirmSenha"
+              name="confirmPassword"
               placeholder="Confirmar senha"
               required
-              value={form.confirmSenha}
+              value={form.confirmPassword}
               onChange={handleChange}
               className="w-full rounded-lg border border-gray-300 px-4 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200"
             />
@@ -201,7 +207,7 @@ export default function Register() {
             Já possui uma conta?{" "}
             <a
               href="/login"
-              className="text-indigo-600 hover:underline font-medium"
+              className="text-gray-600 hover:underline font-medium"
             >
               Entrar
             </a>
@@ -210,4 +216,5 @@ export default function Register() {
       </main>
     </div>
   );
+
 }

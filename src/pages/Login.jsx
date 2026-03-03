@@ -1,5 +1,4 @@
 import { useState } from "react";
-import {AXIOS} from "../services"
 import { useUser } from "../contexts/UsuarioProvider";
 import { useNavigate } from "react-router";
 
@@ -27,7 +26,7 @@ export default function Login() {
 
         try {
             setLoading(true);
-            await login(form.email, form.password)
+            await login(form.email, form.senha)
             navigate('/')
         } catch (err) {
             setError(
