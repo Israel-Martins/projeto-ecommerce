@@ -31,6 +31,7 @@ const Paths = () => {
                     <Route path="/register" element={<Register />} />
                     <Route path="/reset-password" element={<ResetPassword />} />
                     <Route path="/forgot-password" element={<ForgotPassword />} />
+                    <Route path="/reset-password" element={<ResetPassword />} />
                 </Route>
                 <Route path="/dashboard" element={<Dashboard />} >
                 </Route>

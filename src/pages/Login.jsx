@@ -4,7 +4,7 @@ import { useNavigate } from "react-router";
 
 export default function Login() {
 
-    const {login} = useUser()
+    const { login } = useUser()
     const navigate = useNavigate()
 
     const [form, setForm] = useState({
@@ -25,8 +25,15 @@ export default function Login() {
 
         try {
             setLoading(true);
-            await login(form.email, form.password)
-            navigate('/')
+            const data = await login(form.email, form.senha)
+
+            if (data.user.nivel === "adm") {
+                navigate("/dashboard");
+                
+            } else {
+                navigate("/");
+            }
+
         } catch (err) {
             setError(
                 err.response?.data?.message ||
