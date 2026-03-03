@@ -20,6 +20,7 @@ const Paths = () => {
                     <Route index element={<Home />} />
                     <Route path="/product" element={<PageProduct />} />
                     <Route path="/usuario/:name" element={<Usuario />} />
+                    <Route path="/checkout" element={<Checkout />} />
                     <Route path="/orders" element={<OrdersPage />} />
                     <Route path="/checkout" element={<Checkout />} />
 
@@ -31,6 +32,7 @@ const Paths = () => {
                     <Route path="/register" element={<Register />} />
                     <Route path="/reset-password" element={<ResetPassword />} />
                     <Route path="/forgot-password" element={<ForgotPassword />} />
+                    <Route path="/reset-password" element={<ResetPassword />} />
                 </Route>
                 <Route path="/dashboard" element={<Dashboard />} >
                 </Route>
