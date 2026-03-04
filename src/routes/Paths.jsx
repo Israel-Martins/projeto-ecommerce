@@ -28,7 +28,7 @@ const Paths = () => {
         <Route path="/" element={<PageLayout />}>
           <Route index element={<Home />} />
           <Route path="checkout" element={<Checkout />} />
-          <Route path="product/:slug" element={<PageProduct />} />
+          <Route path="product/:id" element={<PageProduct />} />
           <Route path="usuario/:name" element={<Usuario />} />
           <Route path="orders" element={<OrdersPage />} />
         </Route>

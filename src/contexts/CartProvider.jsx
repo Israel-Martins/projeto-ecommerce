@@ -9,10 +9,16 @@ export function CartProvider({ children }) {
 
     // 🔥 NOVO ESTADO DO SIDEBAR
     const [isCartOpen, setIsCartOpen] = useState(false);
+    const [isOpenProduct, setIsOpenProduct] = useState(false);
+
+
+    const openProduct = () => setIsOpenProduct(true);
+    const closeProduct = () => setIsOpenProduct(false);
 
     const openCart = () => setIsCartOpen(true);
     const closeCart = () => setIsCartOpen(false);
     const toggleCart = () => setIsCartOpen(prev => !prev);
+
 
     // =============================
     // RESTO DO SEU CÓDIGO NORMAL
@@ -122,7 +128,13 @@ export function CartProvider({ children }) {
                 isCartOpen,
                 openCart,
                 closeCart,
-                toggleCart
+                toggleCart,
+
+                // sidebar criar produt
+
+                isOpenProduct,
+                openProduct,
+                closeProduct
             }}
         >
             {children}

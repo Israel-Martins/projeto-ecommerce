@@ -10,6 +10,9 @@ export function UserProvider({ children }) {
         const savedUser = sessionStorage.getItem("user");
         return savedUser ? JSON.parse(savedUser) : null;
     });
+    const [userBarOpen, setUserBarOpen] = useState()
+    const isOpen = () => setUserBarOpen(true)
+    const isClose = () => setUserBarOpen(false)
 
     const [token, setToken] = useState(() =>
         sessionStorage.getItem("token") || null
@@ -35,13 +38,13 @@ export function UserProvider({ children }) {
     // 🔹 Login
     const login = async (email, senha) => {
         try {
-            const { data } = await AXIOS.post("/api/users/login", { email, senha });
-
-            if (data.user && data.token) {
-                setUser(data.user);
+            const { data } = await AXIOS.post("/api/auth/login", { email, senha });
+            // console.log(data)
+            if (data.usuario && data.token) {
+                setUser(data.usuario);
                 setToken(data.token);
 
-                sessionStorage.setItem("user", JSON.stringify(data.user));
+                sessionStorage.setItem("user", JSON.stringify(data.usuario));
                 sessionStorage.setItem("token", data.token);
             }
 
@@ -56,7 +59,7 @@ export function UserProvider({ children }) {
     const register = async (nome, email, cpf, telefone, genero, data_nasc, senha) => {
         try {
             console.log(cpf, telefone);
-            
+
             const { data } = await AXIOS.post("/api/users", {
                 nome,
                 email,
@@ -66,7 +69,7 @@ export function UserProvider({ children }) {
                 data_nasc,
                 senha,
             });
-            
+
             if (data.user && data.token) {
                 setUser(data.user);
                 setToken(data.token);
@@ -98,6 +101,10 @@ export function UserProvider({ children }) {
                 register,
                 logout,
                 isAuthenticated: !!user,
+
+                userBarOpen,
+                isOpen,
+                isClose
             }}
         >
             {children}

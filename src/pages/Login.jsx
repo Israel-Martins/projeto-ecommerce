@@ -26,8 +26,13 @@ export default function Login() {
 
         try {
             setLoading(true);
-            await login(form.email, form.senha)
-            navigate('/')
+            const data = await login(form.email, form.senha)
+
+            if (data) {
+                navigate('/')
+            }
+
+
         } catch (err) {
             setError(
                 err.response?.data?.message ||
