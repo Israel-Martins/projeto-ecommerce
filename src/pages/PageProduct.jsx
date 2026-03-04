@@ -1,26 +1,28 @@
 import { useState, useMemo, useEffect } from "react";
-import { FaStar, FaRegStar, FaTruck, FaShoppingCart } from "react-icons/fa";
+import { FaStar, FaRegStar, FaTruck, FaShoppingCart, FaBoxOpen } from "react-icons/fa";
 import { useCart } from "../contexts/CartProvider";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { AXIOS } from "../services";
-
+import { useUser } from "../contexts/UsuarioProvider";
 
 export default function PageProduct() {
     const { id } = useParams();
     const { addToCart } = useCart();
+    const { user } = useUser()
+    const navigate = useNavigate()
 
-    const [produto, setProduto] = useState({});
+    const [produto, setProduto] = useState(null);
     const [imagemAtiva, setImagemAtiva] = useState(0);
     const [quantidade, setQuantidade] = useState(1);
-    const [cep, setCep] = useState("");
-    const [fretes, setFretes] = useState([]);
-    const [loadingFrete, setLoadingFrete] = useState(false);
+    // const [cep, setCep] = useState("");
+    // const [fretes, setFretes] = useState([]);
+    // const [loadingFrete, setLoadingFrete] = useState(false);
 
     const [tamanhoSelecionado, setTamanhoSelecionado] = useState(null);
     const [corSelecionada, setCorSelecionada] = useState(null);
 
     // =========================
-    // Buscar produto
+    // Buscar Produto
     // =========================
     useEffect(() => {
         async function buscarProduto() {
@@ -40,7 +42,7 @@ export default function PageProduct() {
                 }
 
             } catch (error) {
-                console.log("Erro ao buscar produto:", error);
+                console.log(error);
             }
         }
 
@@ -48,14 +50,18 @@ export default function PageProduct() {
     }, [id]);
 
     // =========================
-    // Cálculo de preço
+    // Cálculo de Preço
     // =========================
     const preco = useMemo(() => {
-        const valorNumero = Number(produto.valor || 0);
-        const descontoNumero = Number(produto.desconto || 0);
-        const final = valorNumero - (valorNumero * descontoNumero) / 100;
+        if (!produto) return { final: 0, pix: 0, parcela: 0 };
+
+        const valor = Number(produto.valor || 0);
+        const desconto = Number(produto.desconto || 0);
+
+        const final = valor - (valor * desconto) / 100;
 
         return {
+            original: valor,
             final,
             pix: final * 0.95,
             parcela: final / 12
@@ -63,10 +69,10 @@ export default function PageProduct() {
     }, [produto]);
 
     // =========================
-    // Média das avaliações
+    // Avaliação
     // =========================
     const avaliacaoMedia = useMemo(() => {
-        if (!produto.avaliacoes || produto.avaliacoes.length === 0) return 0;
+        if (!produto?.avaliacoes?.length) return 0;
 
         const total = produto.avaliacoes.reduce(
             (acc, item) => acc + Number(item.nota),
@@ -76,55 +82,17 @@ export default function PageProduct() {
         return Number((total / produto.avaliacoes.length).toFixed(1));
     }, [produto]);
 
-    // =========================
-    // Calcular Frete (mock)
-    // =========================
-    async function calcularFrete() {
-        if (!cep || cep.length < 8) return;
-        setLoadingFrete(true);
+   
+    const getImageUrl = (imageUrl) => {
+        if (!imageUrl) return null;
+        return imageUrl;
+    };
 
-        try {
-            const mockFretes = [
-                { id: 1, name: "PAC", price: 20.0, delivery_time: 5 },
-                { id: 2, name: "SEDEX", price: 35.0, delivery_time: 2 }
-            ];
-            setFretes(mockFretes);
-        } catch {
-            setFretes([]);
-        } finally {
-            setLoadingFrete(false);
-        }
+
+    if (!produto) {
+        return <div className="p-20 text-center h-screen">Carregando produto...</div>;
     }
 
-    // =========================
-    // Adicionar ao carrinho
-    // =========================
-    const handleAddToCart = () => {
-        if (produto.estoque === 0) return;
-
-        addToCart({
-            ...produto,
-            quantidade,
-            tamanhoSelecionado,
-            corSelecionada
-        });
-    };
-
-    const handleComprarAgora = () => {
-        if (produto.estoque === 0) return;
-
-        addToCart({
-            ...produto,
-            quantidade,
-            tamanhoSelecionado,
-            corSelecionada
-        });
-        // redirecionar para checkout se desejar
-    };
-
-    // =========================
-    // Dados auxiliares
-    // =========================
     const imagens = produto.produto_imagens || [];
     const tamanhos = produto.tamanhos ? JSON.parse(produto.tamanhos) : [];
     const cores = produto.cores ? JSON.parse(produto.cores) : [];
@@ -132,10 +100,9 @@ export default function PageProduct() {
     return (
         <main className="min-h-screen bg-gray-50">
 
-            {/* BREADCRUMB */}
+            {/* Breadcrumb */}
             <div className="max-w-7xl mx-auto px-6 py-4 text-sm text-gray-500">
-                <a href="/">Home</a> /{" "}
-                <a href="#">{produto.categoria?.nome || "Categoria"}</a> /{" "}
+                Home / {produto.categoria?.nome} /{" "}
                 <span className="text-black">{produto.nome}</span>
             </div>
 
@@ -143,59 +110,102 @@ export default function PageProduct() {
 
                 {/* GALERIA */}
                 <div>
-                    <div className="bg-white rounded-2xl shadow p-6">
-                        {imagens[imagemAtiva] && (
+                    <div className="bg-white rounded-2xl shadow p-6 relative">
+
+                        {/* Badge Desconto */}
+                        {produto.desconto > 0 && (
+                            <div className="absolute top-4 left-4 bg-red-600 text-white px-3 py-1 text-sm rounded-full">
+                                -{produto.desconto}%
+                            </div>
+                        )}
+
+                        {/* Imagem ou fallback */}
+                        {imagens.length > 0 && getImageUrl(imagens[imagemAtiva].url) ? (
                             <img
-                                src={imagens[imagemAtiva].url}
+                                src={getImageUrl(imagens[imagemAtiva].url)}
                                 className="w-full h-[450px] object-contain"
                                 alt={produto.nome}
+                                onError={(e) => {
+                                    e.target.style.display = "none";
+                                }}
                             />
+                        ) : (
+                            <div className="w-full h-[450px] flex items-center justify-center bg-gray-200">
+                                <FaBoxOpen size={80} className="text-gray-400" />
+                            </div>
+                        )}
+
+                        {/* Esgotado Overlay */}
+                        {produto.estoque === 0 && (
+                            <div className="absolute inset-0 bg-white/80 flex items-center justify-center text-3xl font-bold text-red-600">
+                                ESGOTADO
+                            </div>
                         )}
                     </div>
 
+                    {/* Miniaturas */}
                     <div className="flex gap-4 mt-4">
-                        {imagens.map((img, i) => (
-                            <img
-                                key={img.id}
-                                src={img.url}
-                                onClick={() => setImagemAtiva(i)}
-                                className={`w-20 h-20 object-cover rounded-lg cursor-pointer border-2 transition 
-                                ${imagemAtiva === i ? "border-black" : "border-transparent"}`}
-                                alt="Miniatura"
-                            />
-                        ))}
+                        {imagens.map((img, i) => {
+                            const imgUrl = getImageUrl(img.url);
+                            return imgUrl ? (
+                                <img
+                                    key={img.id}
+                                    src={imgUrl}
+                                    onClick={() => setImagemAtiva(i)}
+                                    className={`w-20 h-20 object-cover rounded-lg cursor-pointer border-2 
+                                    ${imagemAtiva === i ? "border-black" : "border-transparent"}`}
+                                    alt=""
+                                    onError={(e) => {
+                                        e.target.style.display = "none";
+                                    }}
+                                />
+                            ) : (
+                                <div
+                                    key={img.id}
+                                    onClick={() => setImagemAtiva(i)}
+                                    className={`w-20 h-20 bg-gray-200 rounded-lg cursor-pointer border-2 flex items-center justify-center
+                                    ${imagemAtiva === i ? "border-black" : "border-transparent"}`}
+                                >
+                                    <FaBoxOpen size={24} className="text-gray-400" />
+                                </div>
+                            );
+                        })}
                     </div>
                 </div>
 
-                {/* INFORMAÇÕES */}
+                {/* INFO */}
                 <div className="space-y-6">
+
                     <h1 className="text-3xl font-bold">{produto.nome}</h1>
 
                     {/* Avaliação */}
                     <div className="flex items-center gap-2">
-                        {[1, 2, 3, 4, 5].map(star => (
+                        {[1, 2, 3, 4, 5].map(star =>
                             star <= avaliacaoMedia
                                 ? <FaStar key={star} className="text-yellow-400" />
                                 : <FaRegStar key={star} className="text-gray-300" />
-                        ))}
+                        )}
                         <span className="text-sm text-gray-500">
                             ({avaliacaoMedia} de 5)
                         </span>
                     </div>
 
                     {/* Preço */}
-                    <div className="space-y-1">
+                    <div>
                         {produto.desconto > 0 && (
-                            <div className="text-sm text-gray-400 line-through">
-                                R$ {Number(produto.valor).toFixed(2)}
+                            <div className="text-gray-400 line-through">
+                                R$ {preco.original.toFixed(2)}
                             </div>
                         )}
+
                         <div className="text-4xl font-bold">
                             R$ {preco.final.toFixed(2)}
                         </div>
+
                         <div className="text-green-600 font-medium">
                             5% OFF no PIX → R$ {preco.pix.toFixed(2)}
                         </div>
+
                         <div className="text-gray-500 text-sm">
                             ou 12x de R$ {preco.parcela.toFixed(2)} sem juros
                         </div>
@@ -204,8 +214,8 @@ export default function PageProduct() {
                     {/* Estoque */}
                     <div>
                         {produto.estoque > 0 ? (
-                            <span className="text-green-600 font-medium">
-                                {produto.estoque} unidades disponíveis
+                            <span className="text-green-600">
+                                {produto.estoque} disponíveis
                             </span>
                         ) : (
                             <span className="text-red-600 font-medium">
@@ -217,86 +227,107 @@ export default function PageProduct() {
                     {/* Tamanho */}
                     {tamanhos.length > 0 && (
                         <div>
-                            <span className="font-medium mr-2">Tamanho:</span>
-                            {tamanhos.map(tam => (
-                                <button
-                                    key={tam}
-                                    onClick={() => setTamanhoSelecionado(tam)}
-                                    className={`px-3 py-1 mr-2 mb-2 rounded-lg border 
-                                    ${tamanhoSelecionado === tam ? "bg-black text-white" : "bg-white text-black"}`}
-                                >
-                                    {tam}
-                                </button>
-                            ))}
+                            <span className="font-medium">Tamanho:</span>
+                            <div className="mt-2 flex gap-2 flex-wrap">
+                                {tamanhos.map(t => (
+                                    <button
+                                        key={t}
+                                        onClick={() => setTamanhoSelecionado(t)}
+                                        className={`px-4 py-2 border rounded-lg 
+                                        ${tamanhoSelecionado === t ? "bg-black text-white" : "bg-white"}`}
+                                    >
+                                        {t}
+                                    </button>
+                                ))}
+                            </div>
                         </div>
                     )}
 
                     {/* Cor */}
                     {cores.length > 0 && (
                         <div>
-                            <span className="font-medium mr-2">Cor:</span>
-                            {cores.map(cor => (
-                                <button
-                                    key={cor}
-                                    onClick={() => setCorSelecionada(cor)}
-                                    className={`px-3 py-1 mr-2 mb-2 rounded-lg border 
-                                    ${corSelecionada === cor ? "bg-black text-white" : "bg-white text-black"}`}
-                                >
-                                    {cor}
-                                </button>
-                            ))}
+                            <span className="font-medium">Cor:</span>
+                            <div className="mt-2 flex gap-2 flex-wrap">
+                                {cores.map(c => (
+                                    <button
+                                        key={c}
+                                        onClick={() => setCorSelecionada(c)}
+                                        className={`px-4 py-2 border rounded-lg 
+                                        ${corSelecionada === c ? "bg-black text-white" : "bg-white"}`}
+                                    >
+                                        {c}
+                                    </button>
+                                ))}
+                            </div>
                         </div>
                     )}
 
                     {/* Quantidade */}
                     <div className="flex items-center gap-4">
-                        <span className="font-medium">Quantidade:</span>
-                        <div className="flex border rounded-lg overflow-hidden">
+                        <span>Quantidade:</span>
+                        <div className="flex border rounded-lg">
                             <button
                                 onClick={() => quantidade > 1 && setQuantidade(q => q - 1)}
-                                className="px-4 py-2 bg-gray-100 hover:bg-gray-200"
+                                className="px-4"
                             >-</button>
-
                             <div className="px-6 py-2">{quantidade}</div>
-
                             <button
                                 onClick={() =>
                                     quantidade < produto.estoque &&
                                     setQuantidade(q => q + 1)
                                 }
-                                className="px-4 py-2 bg-gray-100 hover:bg-gray-200"
+                                className="px-4"
                             >+</button>
                         </div>
                     </div>
 
                     {/* Botões */}
                     <div className="flex gap-4">
+
                         <button
                             disabled={produto.estoque === 0}
-                            onClick={handleAddToCart}
+                            onClick={() => {
+
+                                if (user) {
+                                    addToCart({
+                                        ...produto,
+                                        quantidade,
+                                        tamanhoSelecionado,
+                                        corSelecionada
+                                    })
+                                    return
+                                }
+
+                                navigate('/login')
+                            }
+
+                            }
                             className={`flex-1 py-4 rounded-xl flex items-center justify-center gap-2
                             ${produto.estoque === 0
                                     ? "bg-gray-400 cursor-not-allowed"
-                                    : "bg-black text-white hover:opacity-90"}`}
+                                    : "bg-black text-white"}`}
                         >
-                            <FaShoppingCart /> Adicionar ao Carrinho
+                            <FaShoppingCart />
+                            Adicionar ao Carrinho
                         </button>
 
-                        <button
+
+
+                        <a
+                            href={'/checkout'}
                             disabled={produto.estoque === 0}
-                            onClick={handleComprarAgora}
-                            className={`flex-1 py-4 rounded-xl
+                            className={`flex-1 py-4 rounded-xl text-center
                             ${produto.estoque === 0
                                     ? "bg-gray-400 cursor-not-allowed"
-                                    : "bg-green-600 text-white hover:bg-green-700"}`}
+                                    : "bg-green-600 text-white"}`}
                         >
                             Comprar Agora
-                        </button>
+                        </a>
                     </div>
 
                     {/* Informações Técnicas */}
-                    <div className="bg-gray-100 rounded-xl p-6 space-y-2">
-                        <h3 className="font-semibold text-lg">
+                    <div className="bg-gray-100 rounded-xl p-6">
+                        <h3 className="font-semibold text-lg mb-4">
                             Informações Técnicas
                         </h3>
 
@@ -308,49 +339,13 @@ export default function PageProduct() {
                         </div>
                     </div>
 
-                    {/* Frete */}
-                    <div className="bg-white rounded-xl shadow p-6 space-y-4">
-                        <h3 className="font-semibold text-lg flex items-center gap-2">
-                            <FaTruck /> Calcular Frete
-                        </h3>
-
-                        <div className="flex gap-3">
-                            <input
-                                placeholder="Digite seu CEP"
-                                value={cep}
-                                onChange={e => setCep(e.target.value)}
-                                className="border rounded-lg p-3 flex-1"
-                            />
-                            <button
-                                onClick={calcularFrete}
-                                className="bg-black text-white px-6 rounded-lg"
-                            >
-                                {loadingFrete ? "..." : "Calcular"}
-                            </button>
-                        </div>
-
-                        {fretes.map(frete => (
-                            <div key={frete.id} className="flex justify-between border rounded-lg p-4">
-                                <div>
-                                    <div className="font-medium">{frete.name}</div>
-                                    <div className="text-sm text-gray-500">
-                                        Entrega em {frete.delivery_time} dias
-                                    </div>
-                                </div>
-                                <div className="font-bold">
-                                    R$ {frete.price}
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-
                 </div>
             </div>
 
             {/* Descrição */}
             <div className="bg-white py-16 border-t">
-                <div className="max-w-4xl mx-auto px-6 space-y-6">
-                    <h2 className="text-2xl font-bold">
+                <div className="max-w-4xl mx-auto px-6">
+                    <h2 className="text-2xl font-bold mb-4">
                         Descrição do Produto
                     </h2>
                     <p className="text-gray-600 leading-relaxed">

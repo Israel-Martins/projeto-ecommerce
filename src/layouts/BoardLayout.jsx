@@ -1,16 +1,30 @@
 import { useEffect } from "react";
-import { Outlet } from "react-router";
+import { Outlet, useNavigate } from "react-router";
 import UserSideBar from "../components/UserSideBar";
 import ProductSideBar from "../components/ProductSideBar";
+import { useUser } from "../contexts/UsuarioProvider";
+import ProductPutBar from "../components/ProductPutBar";
+import CategoriesBar from "../components/CategoriesBar";
+import CategoriesEditBar from "../components/CategoriesEditBar";
+import CouponsBar from "../components/CuponsBar";
 
 const BoardLayout = () => {
-    
-    useEffect(() => {
-        async function conferirUsuario() {
+    const { user } = useUser();
+    const navigate = useNavigate();
 
+    useEffect(() => {
+        if (!user) {
+            navigate("/");
         }
-        conferirUsuario()
-    }, [])
+        else if(user.nivel === 'admin') {
+            return
+        }
+        else {
+            navigate('/')
+        }
+    }, [user, navigate]);
+
+    if (!user) return null; // evita renderizar enquanto redireciona
     return (
         <div className="min-h-screen bg-[var(--bg)] text-white">
 
@@ -18,8 +32,12 @@ const BoardLayout = () => {
                 <Outlet />
             </div>
             <ProductSideBar />
+            <ProductPutBar  />
             <UserSideBar />
-
+            <CategoriesBar />
+            <CategoriesEditBar />
+            <CouponsBar />
+            
         </div>
     );
 }

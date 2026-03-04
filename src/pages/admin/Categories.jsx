@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { FaLayerGroup, FaPlus, FaTag } from "react-icons/fa";
 import { AXIOS } from "../../services";
+import { useCart } from "../../contexts/CartProvider";
 
 const Categories = () => {
+  const { openCatego, openEditCatego, setIdCatego} = useCart()
 
   const [categories, setCategories] = useState([])
   useEffect(() => {
@@ -18,6 +20,14 @@ const Categories = () => {
     buscarCategorias();
   }, []);
 
+  async function apagarCategoria(id) {
+    try {
+      const response = await AXIOS.delete(`/api/categories/${id}`)
+      console.log(response)
+    }catch(err) {
+      console.log(err)
+    }
+  }
 
   // Total de produtos geral
   const totalProdutos = categories.reduce(
@@ -48,7 +58,7 @@ const Categories = () => {
           </h1>
         </div>
 
-        <button className="flex w-fit items-center gap-2 rounded-lg bg-[var(--bgButton)] px-4 py-2 text-sm font-semibold transition hover:bg-[var(--bgHover)]">
+        <button onClick={openCatego} className="flex w-fit items-center gap-2 rounded-lg bg-[var(--bgButton)] px-4 py-2 text-sm font-semibold transition hover:bg-[var(--bgHover)]">
           <FaPlus />
           Nova categoria
         </button>
@@ -112,8 +122,11 @@ const Categories = () => {
                   {categoria.produtos?.length || 0} produtos
                 </span>
 
-                <button className="rounded-md border border-white/10 px-3 py-1 text-xs transition hover:border-[var(--bgButton)]">
+                <button onClick={() => {openEditCatego(), setIdCatego(categoria.id)}} className="rounded-md border border-white/10 px-3 py-1 text-xs transition hover:border-[var(--bgButton)]">
                   Editar
+                </button>
+                <button onClick={() => apagarCategoria(categoria.id)} className="rounded-md border border-white/10 px-3 py-1 text-xs transition hover:border-[var(--bgButton)]">
+                  Apagar
                 </button>
               </div>
             </div>

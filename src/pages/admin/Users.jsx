@@ -14,7 +14,7 @@ import { BiTrash } from "react-icons/bi";
 // ];
 
 const Users = () => {
-  const { user, isOpen } = useUser()
+  const { isOpen } = useUser()
   const [users, setUsers] = useState([])
 
   useEffect(() => {
@@ -23,6 +23,7 @@ const Users = () => {
     async function buscarUsuarios() {
       try {
         const response = await AXIOS.get("/api/users");
+        console.log(response.data)
         setUsers(response.data);
       } catch (err) {
         console.log(err);
@@ -96,6 +97,7 @@ const Users = () => {
                 <th className="px-2 py-2 font-medium">Pedidos</th>
                 <th className="px-2 py-2 font-medium">Total gasto</th>
                 <th className="px-2 py-2 font-medium">Status</th>
+                <th className="px-2 py-2 font-medium">Nivel</th>
               </tr>
             </thead>
             <tbody>
@@ -106,10 +108,11 @@ const Users = () => {
                   <td className="px-2 py-3">{users.pedidos.length}</td>
                   <td className="px-2 py-3">{users.pedidos.reduce((acc, pedido) => acc + Number(pedido.valor_total), 0)}</td>
                   <td className="px-2 py-3">
-                    <span className={`rounded-md px-2 py-1 text-xs ${user.emailVerificado ? "bg-emerald-500/15 text-emerald-300" : "bg-zinc-500/15 text-zinc-300"}`}>
-                      {user.emailVerificado ? 'ativo' : 'inativo'}
+                    <span className={`rounded-md px-2 py-1 text-xs ${users.emailVerificado ? "bg-emerald-500/15 text-emerald-300" : "bg-zinc-500/15 text-zinc-300"}`}>
+                      {users.emailVerificado ? 'ativo' : 'inativo'}
                     </span>
                   </td>
+                  <td className="px-2 py-3">{users.nivel}</td>
                   <td className="px-2 py-3">
                     <button onClick={() => deleteUser(users.id)}>
                       <BiTrash />

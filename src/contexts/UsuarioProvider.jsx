@@ -60,15 +60,35 @@ export function UserProvider({ children }) {
         try {
             console.log(cpf, telefone);
 
-            const { data } = await AXIOS.post("/api/users", {
-                nome,
-                email,
-                cpf,
-                telefone,
-                genero,
-                data_nasc,
-                senha,
-            });
+            let data;
+
+            if (user?.nivel === 'admin') {
+                const response = await AXIOS.post("/api/users", {
+                    nome,
+                    email,
+                    cpf,
+                    telefone,
+                    genero,
+                    data_nasc,
+                    senha,
+                    nivel: "admin"
+                });
+
+                data = response.data;
+
+            } else {
+                const response = await AXIOS.post("/api/users", {
+                    nome,
+                    email,
+                    cpf,
+                    telefone,
+                    genero,
+                    data_nasc,
+                    senha,
+                });
+
+                data = response.data;
+            }
 
             if (data.user && data.token) {
                 setUser(data.user);

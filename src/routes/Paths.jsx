@@ -20,6 +20,11 @@ import AdminCoupons from "../pages/admin/Coupons";
 import AdminUsers from "../pages/admin/Users";
 import AdminCategories from "../pages/admin/Categories";
 import AdminProducts from "../pages/admin/Products";
+import AboutUs from "../pages/AboutUs";
+import Blog from "../pages/Blog";
+import OrderTracking from "../pages/OrderTracking";
+import NotFound from "../pages/NotFound";
+import Products from "../pages/Products";
 
 const Paths = () => {
   return (
@@ -29,6 +34,7 @@ const Paths = () => {
           <Route index element={<Home />} />
           <Route path="checkout" element={<Checkout />} />
           <Route path="product/:id" element={<PageProduct />} />
+          <Route path="products" element={<Products />} />
           <Route path="usuario/:name" element={<Usuario />} />
           <Route path="orders" element={<OrdersPage />} />
         </Route>
@@ -38,9 +44,10 @@ const Paths = () => {
           <Route path="register" element={<Register />} />
           <Route path="forgot-password" element={<ForgotPassword />} />
           <Route path="reset-password" element={<ResetPassword />} />
+          <Route path="about-us" element={<AboutUs />} />
+          <Route path="blog" element={<Blog />} />
+          <Route path="order-tracking" element={<OrderTracking />} />
         </Route>
-
-        <Route path="/dashboard" element={<Dashboard />} />
 
         <Route path="/admin" element={<BoardLayout />}>
           <Route index element={<AdminDashboard />} />
@@ -50,6 +57,8 @@ const Paths = () => {
           <Route path="categories" element={<AdminCategories />} />
           <Route path="products" element={<AdminProducts />} />
         </Route>
+        
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
   );

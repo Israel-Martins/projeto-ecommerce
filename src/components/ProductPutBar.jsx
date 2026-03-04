@@ -1,12 +1,11 @@
-import { useCart } from "../contexts/CartProvider";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { AXIOS } from "../services";
+import { useCart } from "../contexts/CartProvider";
 import { FaTimes } from "react-icons/fa";
 
-const ProductSideBar = () => {
+const ProductPutBar = () => {
 
-
-    const { isOpenProduct, closeProduct } = useCart()
+    const { isOpenEdit, closeEdit, id } = useCart()
     const [categorias, setCategorias] = useState([]);
     const [form, setForm] = useState({
         nome: "",
@@ -27,7 +26,7 @@ const ProductSideBar = () => {
     const [success, setSuccess] = useState("");
 
     useEffect(() => {
-        if (!isOpenProduct) return;
+        if (!isOpenEdit) return;
         async function fetchCategorias() {
             try {
                 const response = await AXIOS.get("/api/categories");
@@ -37,7 +36,7 @@ const ProductSideBar = () => {
             }
         }
         fetchCategorias();
-    }, [isOpenProduct]);
+    }, [isOpenEdit]);
 
     function handleChange(e) {
         setForm({ ...form, [e.target.name]: e.target.value });
@@ -50,7 +49,7 @@ const ProductSideBar = () => {
 
         try {
             setLoading(true);
-            await AXIOS.post("/api/products", form);
+            await AXIOS.put(`/api/products/${id}`, form);
             setSuccess("Produto criado com sucesso!");
             setForm({
                 nome: "",
@@ -67,7 +66,7 @@ const ProductSideBar = () => {
                 peso: "",
             });
         } catch (err) {
-            setError(err.response?.data?.message || "Erro ao criar produto");
+            setError(err.response?.data?.message || "Erro ao Editar produto");
         } finally {
             setLoading(false);
         }
@@ -77,21 +76,21 @@ const ProductSideBar = () => {
         <>
             {/* Overlay */}
             <div
-                onClick={closeProduct}
-                className={`fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity z-40 ${isOpenProduct ? "opacity-100 visible" : "opacity-0 invisible"
+                onClick={closeEdit}
+                className={`fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity z-40 ${isOpenEdit ? "opacity-100 visible" : "opacity-0 invisible"
                     }`}
             />
 
             {/* Sidebar */}
             <aside
-                className={`fixed top-0 text-black right-0 h-full w-full sm:w-[420px] bg-white shadow-2xl z-50 transform transition-transform duration-300 ${isOpenProduct ? "translate-x-0" : "translate-x-full"
+                className={`fixed top-0 text-black right-0 h-full w-full sm:w-[420px] bg-white shadow-2xl z-50 transform transition-transform duration-300 ${isOpenEdit ? "translate-x-0" : "translate-x-full"
                     }`}
             >
                 <div className="h-full overflow-y-auto p-6">
                     {/* Header */}
                     <div className="flex items-center justify-between mb-6">
-                        <h2 className="text-xl font-bold text-gray-800">Criar Produto</h2>
-                        <button onClick={closeProduct} className="text-gray-500 hover:text-black">
+                        <h2 className="text-xl font-bold text-gray-800">Editar Produto</h2>
+                        <button onClick={closeEdit} className="text-gray-500 hover:text-black">
                             <FaTimes size={18} />
                         </button>
                     </div>
@@ -237,4 +236,5 @@ const ProductSideBar = () => {
         </>
     );
 };
-export default ProductSideBar;
+
+export default ProductPutBar;

@@ -28,7 +28,9 @@ export default function Login() {
             setLoading(true);
             const data = await login(form.email, form.senha)
 
-            if (data) {
+            if (data.usuario.nivel === 'admin') {
+                navigate('/admin')
+            } else {
                 navigate('/')
             }
 
