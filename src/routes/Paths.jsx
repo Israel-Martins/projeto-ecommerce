@@ -11,9 +11,9 @@ import ForgotPassword from "../pages/ForgotPassword";
 import PageProduct from "../pages/PageProduct";
 import ResetPassword from "../pages/ResetPassword";
 import OrdersPage from "../pages/Orders";
-import Dashboard from "../pages/Dashboard";
 import Usuario from "../pages/Usuario";
 
+import AdminLayout from "../layouts/AdminLayout";
 import AdminDashboard from "../pages/admin/Dashboard";
 import AdminBanners from "../pages/admin/Banners";
 import AdminCoupons from "../pages/admin/Coupons";
@@ -40,10 +40,10 @@ const Paths = () => {
           <Route path="reset-password" element={<ResetPassword />} />
         </Route>
 
-        <Route path="/dashboard" element={<Dashboard />} />
 
-        <Route path="/admin" element={<BoardLayout />}>
-          <Route index element={<AdminDashboard />} />
+        <Route path="/admin" element={<AdminLayout />}>
+
+          <Route path="dashboard" element={<AdminDashboard />} />
           <Route path="banners" element={<AdminBanners />} />
           <Route path="coupons" element={<AdminCoupons />} />
           <Route path="users" element={<AdminUsers />} />

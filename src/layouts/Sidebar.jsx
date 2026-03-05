@@ -1,18 +1,21 @@
-import { aside } from "framer-motion/client";
 import { NavLink } from "react-router-dom";
+import logo from "../assets/logo-icon.svg"
 
 export default function Sidebar() {
     return (
-        <aside className="">
-            <div className="">
-
+        <aside className="w-64 min-h-screen bg-slate-900 text-white flex flex-col">
+            <div className="p-6 border-b border-slate-700 flex justify-center">
+                <img 
+                src={logo} 
+                alt="Logo"
+                className="h-10 object-contain" />
             </div>
 
-            <nav className="">
+            <nav className="flex-1 p-4 space-y-2">
                 <NavLink
                     to="/admin/dashboard"
                     className={({ isActive }) =>
-                        `block px-4 py-2 rounded-lg transition ${isActive
+                        `block text-white font-mono px-4 py-2 rounded-lg transition ${isActive
                             ? "bg-cyan-600"
                             : "hover:bg-slate-700"
                         }`
@@ -24,7 +27,7 @@ export default function Sidebar() {
                 <NavLink
                     to="/admin/products"
                     className={({ isActive }) =>
-                        `block px-4 py-2 rounded-lg transition ${isActive
+                        `block px-4 py-2 text-white font-mono rounded-lg transition ${isActive
                             ? "bg-cyan-600"
                             : "hover:bg-slate-700"
                         }`
@@ -36,7 +39,7 @@ export default function Sidebar() {
                 <NavLink
                     to="/admin/categories"
                     className={({ isActive }) =>
-                        `block px-4 py-2 rounded-lg transition ${isActive
+                        `block px-4 py-2 text-white font-mono rounded-lg transition ${isActive
                             ? "bg-cyan-600"
                             : "hover:bg-slate-700"
                         }`
@@ -48,7 +51,7 @@ export default function Sidebar() {
                 <NavLink
                     to="/admin/users"
                     className={({ isActive }) =>
-                        `block px-4 py-2 rounded-lg transition ${isActive
+                        `block px-4 py-2 text-white font-mono rounded-lg transition ${isActive
                             ? "bg-cyan-600"
                             : "hover:bg-slate-700"
                         }`
@@ -60,7 +63,7 @@ export default function Sidebar() {
                 <NavLink
                     to="/admin/banners"
                     className={({ isActive }) =>
-                        `block px-4 py-2 rounded-lg transition ${isActive
+                        `block px-4 py-2 text-white font-mono rounded-lg transition ${isActive
                             ? "bg-cyan-600"
                             : "hover:bg-slate-700"
                         }`
@@ -72,7 +75,7 @@ export default function Sidebar() {
                 <NavLink
                     to="/admin/coupons"
                     className={({ isActive }) =>
-                        `block px-4 py-2 rounded-lg transition ${isActive
+                        `block px-4 py-2 text-white font-mono rounded-lg transition ${isActive
                             ? "bg-cyan-600"
                             : "hover:bg-slate-700"
                         }`
@@ -84,7 +87,7 @@ export default function Sidebar() {
             </nav>
 
             <div className="p-4 border-t border-slate-700">
-                    <button className="w-full bg-red-600 hover:bg-red-700 py-2 rounded-lg">
+                    <button className="w-full bg-purple-600 text-white font-mono hover:bg-purple-700 py-2 rounded-lg">
                         Logout
                     </button>
             </div>
