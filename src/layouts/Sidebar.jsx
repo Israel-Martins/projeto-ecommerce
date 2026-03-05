@@ -1,12 +1,11 @@
 import { NavLink } from "react-router-dom";
-import logo from "../assets/logo-icon.svg"
 
 export default function Sidebar() {
     return (
         <aside className="w-64 min-h-screen bg-slate-900 text-white flex flex-col">
             <div className="p-6 border-b border-slate-700 flex justify-center">
                 <img 
-                src={logo} 
+                src="/logo-icon-name.svg"  
                 alt="Logo"
                 className="h-10 object-contain" />
             </div>
