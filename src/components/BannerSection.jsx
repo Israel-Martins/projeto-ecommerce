@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
 const BannerSection = () => {
@@ -34,22 +34,22 @@ const BannerSection = () => {
     }
   ];
 
-  // const nextSlide = () => {
-  //   setCurrentIndex((prev) => (prev + 1) % banners.length);
-  // };
+  const nextSlide = () => {
+    setCurrentIndex((prev) => (prev + 1) % banners.length);
+  };
 
   // const prevSlide = () => {
   //   setCurrentIndex((prev) => (prev - 1 + banners.length) % banners.length);
   // };
 
   // Auto-play do carrossel
-  // useEffect(() => {
-  //   const interval = setInterval(() => {
-  //     nextSlide();
-  //   }, 5000); // Muda a cada 5 segundos
+  useEffect(() => {
+    const interval = setInterval(() => {
+      nextSlide();
+    }, 5000); // Muda a cada 5 segundos
 
-  //   return () => clearInterval(interval);
-  // }, []);
+    return () => clearInterval(interval);
+  }, [nextSlide]);
 
   return (
     <section className="relative h-[500px] overflow-hidden">
@@ -58,9 +58,8 @@ const BannerSection = () => {
         {banners.map((banner, index) => (
           <div
             key={banner.id}
-            className={`absolute inset-0 transition-opacity duration-1000 ${
-              index === currentIndex ? "opacity-100" : "opacity-0"
-            }`}
+            className={`absolute inset-0 transition-opacity duration-1000 ${index === currentIndex ? "opacity-100" : "opacity-0"
+              }`}
           >
             {/* Imagem de fundo */}
             <div className="absolute inset-0">
@@ -115,11 +114,10 @@ const BannerSection = () => {
             <button
               key={index}
               onClick={() => setCurrentIndex(index)}
-              className={`h-3 rounded-full transition-all duration-300 ${
-                index === currentIndex
+              className={`h-3 rounded-full transition-all duration-300 ${index === currentIndex
                   ? "bg-[#4FF8D9] w-8"
                   : "bg-white/50 w-3"
-              }`}
+                }`}
               aria-label={`Ir para banner ${index + 1}`}
             />
           ))}
