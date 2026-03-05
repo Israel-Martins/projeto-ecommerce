@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
 const BannerSection = () => {
@@ -10,7 +10,7 @@ const BannerSection = () => {
       title: "Impressão 3D",
       subtitle: "Até 50% OFF",
       description: "Em filamentos e peças selecionados",
-      image: "https://images.unsplash.com/photo-1611532736579-6b16e2b50449?q=80&w=1000&auto=format&fit=crop",
+      image: "/image1.png",
       buttonText: "Ver Ofertas",
       buttonLink: "/products"
     },
@@ -19,7 +19,7 @@ const BannerSection = () => {
       title: "Tecnologia de Ponta",
       subtitle: "Novos Modelos 2024",
       description: "Impressoras e equipamentos mais avançados",
-      image: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=1000&auto=format&fit=crop",
+      image: "/image2.png",
       buttonText: "Explorar",
       buttonLink: "/products"
     },
@@ -28,28 +28,28 @@ const BannerSection = () => {
       title: "Projetos Personalizados",
       subtitle: "Realize suas Ideias",
       description: "Transforme conceitos em realidade com impressão 3D",
-      image: "https://images.unsplash.com/photo-1587825140708-dfaf72ae4b04?q=80&w=1000&auto=format&fit=crop",
+      image: "/image3.png",
       buttonText: "Saiba Mais",
       buttonLink: "/projects"
     }
   ];
 
-  const nextSlide = () => {
-    setCurrentIndex((prev) => (prev + 1) % banners.length);
-  };
+  // const nextSlide = () => {
+  //   setCurrentIndex((prev) => (prev + 1) % banners.length);
+  // };
 
-  const prevSlide = () => {
-    setCurrentIndex((prev) => (prev - 1 + banners.length) % banners.length);
-  };
+  // const prevSlide = () => {
+  //   setCurrentIndex((prev) => (prev - 1 + banners.length) % banners.length);
+  // };
 
   // Auto-play do carrossel
-  useEffect(() => {
-    const interval = setInterval(() => {
-      nextSlide();
-    }, 5000); // Muda a cada 5 segundos
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     nextSlide();
+  //   }, 5000); // Muda a cada 5 segundos
 
-    return () => clearInterval(interval);
-  }, []);
+  //   return () => clearInterval(interval);
+  // }, []);
 
   return (
     <section className="relative h-[500px] overflow-hidden">
@@ -101,13 +101,13 @@ const BannerSection = () => {
 
       {/* Navegação */}
       <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex items-center gap-4">
-        <button
+        {/* <button
           onClick={prevSlide}
           className="bg-white/20 hover:bg-white/30 text-white p-3 rounded-full transition-colors backdrop-blur-sm"
           aria-label="Banner anterior"
         >
           <FaChevronLeft size={20} />
-        </button>
+        </button> */}
 
         {/* Indicadores */}
         <div className="flex gap-2">
@@ -125,13 +125,13 @@ const BannerSection = () => {
           ))}
         </div>
 
-        <button
+        {/* <button
           onClick={nextSlide}
           className="bg-white/20 hover:bg-white/30 text-white p-3 rounded-full transition-colors backdrop-blur-sm"
           aria-label="Próximo banner"
         >
           <FaChevronRight size={20} />
-        </button>
+        </button> */}
       </div>
     </section>
   );

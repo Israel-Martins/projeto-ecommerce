@@ -1,3 +1,4 @@
+import { Title } from "react-head";
 import { FaCalendar, FaUser, FaArrowRight, FaClock, FaTag } from "react-icons/fa";
 import { Link } from "react-router";
 
@@ -43,6 +44,7 @@ const blogPosts = [
 const Blog = () => {
   return (
     <div className="min-h-screen bg-white">
+      <Title>3Dtech - Blog de Impressão 3D</Title>
       {/* HEADER HERO */}
       <header className="bg-gradient-to-r from-blue-600 to-blue-700 text-white py-16 px-6">
         <div className="max-w-6xl mx-auto text-center">

@@ -1,4 +1,5 @@
 import React from 'react';
+import { Title } from 'react-head';
 import { Link } from 'react-router';
 
 const Filamentos = () => {
@@ -27,6 +28,7 @@ const Filamentos = () => {
 
   return (
     <div className="min-h-screen bg-white">
+      <Title>3Dtech - Filamentos 3D</Title>
       <header className="bg-white border-b border-gray-200 py-20 px-6">
         <div className="max-w-6xl mx-auto text-center">
           <h1 className="text-5xl md:text-6xl font-bold mb-4 text-gray-900">Filamentos 3D</h1>

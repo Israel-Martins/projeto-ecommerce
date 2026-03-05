@@ -4,6 +4,7 @@ import { FaTruck, FaCreditCard, FaMoneyBillWave } from "react-icons/fa";
 import { useNavigate } from "react-router";
 import { useUser } from "../contexts/UsuarioProvider";
 import { AXIOS } from "../services";
+import { Title } from "react-head";
 
 const Checkout = () => {
   const { cart, totalItems, clearCart } = useCart();
@@ -121,6 +122,7 @@ const Checkout = () => {
 
   return (
     <div className="min-h-screen p-4 md:p-8 font-sans text-gray-900 bg-white">
+      <Title>3Dtech - Checkout</Title>
       <div className="max-w-7xl mx-auto grid lg:grid-cols-3 gap-8">
         {/* FORMULÁRIO PRINCIPAL */}
         <div className="lg:col-span-2 space-y-6">

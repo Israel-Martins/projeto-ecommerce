@@ -1,4 +1,5 @@
 import React from 'react';
+import { Title } from 'react-head';
 import { FaArrowRight } from 'react-icons/fa';
 import { Link } from 'react-router';
 
@@ -30,7 +31,7 @@ const ProjectsPersonali = () => {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* HERO SECTION */}
+      <Title>3Dtech - Projetos Personalizados</Title>
       <header className="bg-gradient-to-r from-blue-600 to-blue-700 text-white py-20 px-6">
         <div className="max-w-6xl mx-auto text-center">
           <h1 className="text-5xl md:text-6xl font-bold mb-4">Projetos Personalizados</h1>

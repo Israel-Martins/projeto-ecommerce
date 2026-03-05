@@ -4,6 +4,7 @@ import { useCart } from "../contexts/CartProvider";
 import { useNavigate, useParams } from "react-router";
 import { AXIOS } from "../services";
 import { useUser } from "../contexts/UsuarioProvider";
+import { Title } from "react-head";
 
 export default function PageProduct() {
     const { id } = useParams();
@@ -99,7 +100,7 @@ export default function PageProduct() {
 
     return (
         <main className="min-h-screen bg-gray-50">
-
+            <Title>3Dtech - {produto.nome}</Title>
             {/* Breadcrumb */}
             <div className="max-w-7xl mx-auto px-6 py-4 text-sm text-gray-500">
                 Home / {produto.categoria?.nome} /{" "}

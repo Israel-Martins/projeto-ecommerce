@@ -7,6 +7,8 @@ import CategoriesBar from "../components/CategoriesBar";
 import CategoriesEditBar from "../components/CategoriesEditBar";
 import CouponsBar from "../components/CuponsBar";
 import AdminSidebar from "../components/SideBarBoard";
+import HeaderBoard from "../components/HeaderBoard";
+import { Title } from "react-head";
 import { jwtDecode } from "jwt-decode";
 
 const BoardLayout = () => {
@@ -29,11 +31,14 @@ const BoardLayout = () => {
         }
 
     }, [navigate]);
-    
+
     return (
-        <div className="min-h-screen bg-[var(--bg)] text-white flex">
+
+        <div className=" bg-[var(--bg)] text-white flex">
+            <Title>3Dtech - Dashboard</Title>
             <AdminSidebar />
-            <div className="mx-auto w-full max-w-7xl px-4 py-6 md:px-6">
+            <div className="mx-auto w-full max-w-7xl px-4 py-6 md:px-6 flex flex-col gap-5">
+                <HeaderBoard />
                 <Outlet />
             </div>
             <ProductSideBar />

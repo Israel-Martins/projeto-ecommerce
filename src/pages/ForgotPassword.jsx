@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { AXIOS } from "../services";
+import { Title } from "react-head";
 
 export default function ForgotPassword() {
     const [email, setEmail] = useState("");
@@ -25,6 +26,7 @@ export default function ForgotPassword() {
 
     return (
         <div className="min-h-screen bg-zinc-800 flex flex-col">
+            <Title>3Dtech - Esqueci minha senha</Title>
             <main className="flex-1 flex items-center justify-center px-4">
                 <div className="w-full max-w-md bg-white rounded-2xl shadow-md p-6 sm:p-8">
                     <h2 className="text-2xl font-semibold text-gray-800 mb-4 text-center">

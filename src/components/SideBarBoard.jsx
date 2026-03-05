@@ -1,4 +1,4 @@
-import { NavLink } from "react-router";
+import { NavLink, useNavigate } from "react-router";
 import {
     FaChartPie,
     FaImage,
@@ -7,6 +7,7 @@ import {
     FaTags,
     FaBoxOpen
 } from "react-icons/fa";
+import { useUser } from "../contexts/UsuarioProvider";
 
 const menuItems = [
     { path: "/admin", label: "Dashboard", icon: FaChartPie, end: true },
@@ -18,16 +19,16 @@ const menuItems = [
 ];
 
 const AdminSidebar = () => {
+    const { logout } = useUser()
+    const navigate = useNavigate()
     return (
-        <aside className="h-screen w-64 bg-slate-900 text-slate-300 flex flex-col shadow-xl">
-
-            {/* Logo */}
-            <div className="h-20 flex items-center px-6 border-b border-slate-800">
-                <h1 className="text-xl font-bold text-white tracking-wide">
-                    Admin Panel
-                </h1>
+        <aside className="w-64 min-h-screen bg-slate-900 text-white flex flex-col">
+            <div className="p-6 border-b border-slate-700 flex justify-center">
+                <img
+                    src="/logo-icon-name.svg"
+                    alt="Logo"
+                    className="h-10 object-contain" />
             </div>
-
             {/* Menu */}
             <nav className="flex-1 px-4 py-6 space-y-2">
                 {menuItems.map((item, index) => {
@@ -52,13 +53,16 @@ const AdminSidebar = () => {
                     );
                 })}
             </nav>
-
-            {/* Footer */}
+            <div className="p-4 border-t border-slate-700">
+                <button onClick={() => { logout(), navigate('/login') }} className="w-full bg-purple-600 text-white font-mono hover:bg-purple-700 py-2 rounded-lg">
+                    Logout
+                </button>
+            </div>
             <div className="p-4 border-t border-slate-800 text-xs text-slate-500">
                 © 2026 Admin System
             </div>
         </aside>
-    );
+    )
 };
 
 export default AdminSidebar;

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Title } from "react-head";
 import { FaSearch, FaCheck, FaClock, FaTruck, FaBox, FaMapMarker } from "react-icons/fa";
 
 
@@ -46,6 +47,7 @@ const OrderTracking = () => {
 
     return (
         <div className="min-h-screen bg-white">
+            <Title>3Dtech - Rastreamento de Pedido</Title>
             <div className="max-w-4xl mx-auto px-6 py-12">
                 {/* HEADER */}
                 <div className="text-center mb-12">

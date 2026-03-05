@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { AXIOS } from "../services";
 import { Link } from "react-router";
 import { FaBoxOpen } from "react-icons/fa";
+import { Title } from "react-head";
 
 const Products = () => {
   const [products, setProducts] = useState([]);
@@ -95,6 +96,7 @@ const Products = () => {
 
   return (
     <div className="min-h-screen bg-white">
+      <Title>3Dtech - Produtos</Title>
       <div className="max-w-7xl mx-auto px-6 py-12">
         <h1 className="text-4xl font-bold mb-2 text-gray-900 tracking-tight">Produtos</h1>
         <p className="text-gray-600 mb-8">Navegue por nossa coleção completa de produtos</p>

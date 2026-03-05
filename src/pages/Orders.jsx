@@ -3,6 +3,7 @@ import { AXIOS } from "../services/index.js";
 import { useUser } from "../contexts/UsuarioProvider.jsx";
 import { FaBox, FaSearch, FaFilter, FaChevronRight, FaMapPin, FaDollarSign, FaCalendar } from "react-icons/fa";
 import { Link } from "react-router";
+import { Title } from "react-head";
 
 export default function OrdersPage() {
   const { user } = useUser();
@@ -102,6 +103,7 @@ export default function OrdersPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <Title>3Dtech - Meus Pedidos</Title>
       <div className="max-w-6xl mx-auto px-6 py-12">
         {/* Header */}
         <div className="mb-8">
