@@ -13,6 +13,7 @@ const AboutUs = () => {
           <h1 className="text-5xl md:text-6xl font-bold mb-4 text-gray-900">3DTech</h1>
           <p className="text-xl text-gray-600">
             Transformando Ideias em Realidade
+            
           </p>
         </div>
       </header>
