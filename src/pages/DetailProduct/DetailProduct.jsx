@@ -30,7 +30,7 @@ const DetailProduct = () => {
         async function buscarProduto() {
             try {
                 const response = await AXIOS.get(`/api/products/${id}`);
-                const data = response.data;
+                const data = response.data.dados;
                 setProduto(data);
 
                 if (data.tamanhos) {
@@ -44,6 +44,19 @@ const DetailProduct = () => {
                 }
                 // return <PageDatailProduct nome={data.nome} />
 
+            } catch (error) {
+                console.log(error);
+            }
+        }
+
+        buscarProduto();
+    }, [id]);
+    useEffect(() => {
+        async function buscarProduto() {
+            try {
+                const response = await AXIOS.get(`/api/orders/${user.id}`);
+                const data = response.data.dados;
+                
             } catch (error) {
                 console.log(error);
             }
